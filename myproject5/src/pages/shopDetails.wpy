@@ -1,0 +1,745 @@
+
+<style lang="scss">
+    @import '../assets/wxParse/wxParse.wxss';
+    page{
+        background: #e5e5e5;
+    }
+    .goods_info{
+        &_wrap{
+            // width: 100%;
+            // height: 100%;
+            // position: fixed;
+            // left: 0;top: 0;
+            // z-index: 10;
+            padding-bottom: 90rpx;
+            box-sizing: border-box;
+            .carousel_wrap{
+                height: 564rpx;
+            }
+        }
+        &_name{
+            font-size: 32rpx;
+            line-height: 48rpx;
+            color: #444444;
+            padding:23rpx 0 0 0;
+        }
+        &_msg{
+            padding: 0 20rpx;
+            border-bottom: 2rpx solid #cdcdcd;
+        }
+        &_number{
+            overflow: hidden;
+            font-size: 24rpx;
+            line-height: 48rpx;
+            margin: 16rpx 0 0 0;
+        }
+        &_price{
+            display: flex;
+            text{
+                font-size: 48rpx;
+                margin-right: 10rpx;
+                color: #e83515;
+                margin-bottom: 10rpx;
+            }
+            text:last-child{
+                color: #666;
+                text-decoration: line-through;
+                font-size: 24rpx;
+            }
+        }
+        &_stock{
+            display: flex;
+            text{
+                margin-right: 10rpx;
+                font-size: 24rpx;
+                color: #999999;
+            }
+        }
+        &_text{
+            padding: 12rpx 30rpx;
+            &_title{
+                font-size: 32rpx;
+                text-align: left;
+                color: #999999;
+                font-size: 28rpx;
+                text-indent: 20rpx;
+                margin-top: 33rpx;
+            }
+            image{
+                width: 100%;
+            }
+        }
+    }
+    .tools{
+        &_wrap{
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 9;
+            display: flex;
+            background-color: #fff;
+            view{
+                flex-grow: 1;
+                text-align: center;
+                line-height: 88rpx;
+                font-size: 32rpx;
+            }
+        }
+        &_btns{
+            border-right: 0!important;
+            background-color: #ff9503;
+            color: #fff;
+            font-size: 36rpx;
+            flex:1 1 24%;
+            &:last-child{
+                background-color: #ff0137;
+                color: #fff;
+            }
+        }
+    }
+    .icon_size{
+        position: relative;
+        flex-shrink: 0;
+        border-right: 1px solid #f3f3f3;
+        text{
+            font-size: 48rpx;
+            color: #7c7c7c;
+        }
+        .contact{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;top: 0;
+            z-index: 3;
+            opacity: 0;
+        }
+    }
+    .select_mask{
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;left: 0;
+        z-index: 102;
+        background-color: rgba(0,0,0,.5)
+    }
+    .select_wrap{
+        width: 100%;
+        position: fixed;
+        left: 0;bottom: 0;
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+        .goods_simple{
+            $width: 160rpx;
+            overflow: hidden;
+            padding: 20rpx 30rpx 14rpx 30rpx;
+            border-bottom: 1px solid #ccc;
+            &_image{
+
+                float: left;
+                width: $width;
+                height: $width;
+                background: {
+                    size: cover;
+                    position: center;
+                }
+            }
+            &_text{
+                margin-left: $width + 12;
+            }
+            &_name{
+                display: -webkit-box;
+                overflow: hidden;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                font-size: 38rpx;
+            }
+            &_price{
+                margin-top: 35rpx;
+                color: #e83515;
+                font-size: 48rpx;
+                float: left;
+                margin-bottom: 10rpx;
+            }
+            &_stock{
+                font-size: 28rpx;
+                float: right;
+            }
+
+            @at-root{
+                .spec_not{
+                    height: 100rpx;
+                    line-height: 100rpx;
+                    padding: 0 30rpx;
+                    box-sizing: border-box;
+                }
+                .num_selected{
+                    display: inline-block;
+                    width: 170rpx;
+                    height: 52rpx;
+                    line-height: 52rpx;
+                    border-radius: 8rpx;
+                    text-align: center;
+                    border: 1rpx solid #ccc;
+                    margin-left: 36rpx;
+                    vertical-align: middle;
+                    view{
+                        display: flex;
+                        height: 52rpx;
+                        input{
+                            height: 52rpx;
+                            line-height: 32rpx;
+                            font-size: 24rpx;
+                        }
+                        text{
+                            width: 48rpx;
+                            flex-shrink: 0;
+                            font-size: 24rpx;
+                            box-sizing: border-box;
+                        }
+                        text:nth-of-type(1){
+                            border-right: 1px solid #ccc;
+                        }
+                        text:nth-of-type(2){
+                            border-left: 1px solid #ccc;
+                        }
+                    }
+                }
+                .submit_btn{
+                    width: 100%;
+                    height: 100rpx;
+                    box-sizing: border-box;
+                    font-size: 36rpx;
+                    background-color: #cf2020;
+                    text-align: center;
+                    color: #fff;
+                    line-height: 100rpx;
+                }
+                .spec_props{
+                    &_title{
+                        font-size: 32rpx;
+                        padding: 12rpx 30rpx;
+                    }
+                    &_cont{
+                        display: flex;
+                        padding: 0 60rpx;
+                        box-sizing: border-box;
+                        flex-wrap: wrap;
+                    }
+                    &_item{
+                        font-size: 28rpx;
+                        padding: 10rpx 16rpx;
+                        border: 1px solid #ccc;
+                        border-radius: 10rpx;
+                        margin-right: 10rpx;
+                        margin-bottom: 10rpx;
+                    }
+                    &_item_active{
+                        background-color: #fc1a44;
+                        border-color: #fff;
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+
+    .toast_size{
+        font-size: 128rpx;
+    }
+
+</style>
+
+<template>
+
+    <view>
+        <view class="goods_info_wrap" scroll-y>
+
+            <!-- 富文本解析 -->
+            <import src="../assets/wxParse/wxParse.wxml"></import>
+
+            <!-- 商品详情焦点图 -->
+            <carousel :carouselConfig.sync="carouselConfig"></carousel>
+
+            <!-- 价格 名称 -->
+            <view class="goods_info_msg">
+                <view class="goods_info_name">
+                    {{goodsInfoData.name}}
+                </view>
+                <view class="goods_info_number">
+                    <view class="goods_info_stock">
+                        <text>月销: {{goodsInfoData.sales}}</text>
+                        <text>库存: {{goodsInfoData.stock}}</text>
+                    </view>
+                    <view class="goods_info_price">
+                        <text>{{goodsInfoData.price}}</text>
+                        <text>
+                            <!--{{goodsInfoData.market_price}}-->
+                        </text>
+                    </view>
+                </view>
+            </view>
+            <view class="goods_info_text_title">商品信息</view>
+            <view class="goods_info_text" wx:if="{{goodsInfoData.detail}}">
+                <template is="wxParse" data="{{wxParseData: detailEle.nodes}}"></template>
+            </view>
+
+            <!-- 选择数量型号面板 -->
+            <view class="{{mask ? 'select_mask' : ''}}" wx:if="{{selectBox}}" @tap="cancelBox">
+                <view class="select_wrap" catchtap='catch'>
+                    <view class="goods_simple">
+                        <view class="goods_simple_image" style="background-image: url({{goodsInfoData.thumb}})"></view>
+                        <view class="goods_simple_text">
+                            <view class="goods_simple_name">{{goodsInfoData.name}}</view>
+                            <view class="goods_simple_price">{{price}}</view>
+                            <view class="goods_simple_stock">库存 : {{stock}}</view>
+                        </view>
+                    </view>
+
+                    <!-- 有具体规格 -->
+                    <view class="spec_yes">
+                        <repeat for="{{goodsInfoData.props}}">
+                            <view class="spec_props">
+                                <view class="spec_props_title">
+                                    {{item.name}}
+                                </view>
+                                <view class="spec_props_cont">
+                                    <view
+                                            wx:for="{{item.items}}"
+                                            wx:for-index="inx"
+                                            wx:key="{{inx}}"
+                                            data-index="{{index}}"
+                                            data-itemId="{{inx}}"
+                                            data-value="{{item}}"
+                                            @tap="selectAdd"
+                                            class="spec_props_item {{inx == selectColor[index] ? 'spec_props_item_active' : ''}}"
+                                    >
+                                        {{item}}
+                                    </view>
+                                </view>
+                            </view>
+                        </repeat>
+                    </view>
+
+                    <!-- 无具体规格 -->
+                    <view class="spec_not">
+                        <view class="goods_simple_num">
+                            <text>购买数量 : </text>
+                            <view class="num_selected">
+                                <view class="num_flex">
+                                    <text @tap="reduce">-</text>
+                                    <input
+                                            @input="inputChange"
+                                            @blur="inputBlur"
+                                            @confirm="inputBlur"
+                                            type="number"
+                                            disabled="{{true}}"
+                                            value="{{count}}"
+                                    />
+                                    <text @tap="plus">+</text>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+
+                    <!-- 确认购买 -->
+                    <view class="submit_btn" @tap="shoppingBtn">{{btnText}}</view>
+
+                </view>
+            </view>
+
+        </view>
+        <!-- 客服 加入购物车 付款-->
+        <view class="tools_wrap">
+            <view class="icon_size">
+                <contact-button class="contact"></contact-button>
+                <xnricon2 type="customer" color="#72c4d2" fontSize="40"></xnricon2>
+            </view>
+            <view class="icon_size" @tap="openTel">
+                <xnricon1 type="star" color="#313131" fontSize="40"></xnricon1>
+            </view>
+            <view class="icon_size">
+                <text class="" @tap="goTo" data-url="library">
+                    <xnricon3 type="cart" color="#313131" fontSize="40"></xnricon3>
+                </text>
+            </view>
+            <view class="tools_btns" @tap="addLib">
+                <text>加入购物车</text>
+            </view>
+            <view class="tools_btns" @tap="payBtn">
+                <text>立即购买</text>
+            </view>
+        </view>
+        <toast />
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import Carousel from 'xnr-swiper'
+    import wxParse from '../assets/wxParse/wxParse'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+    import Toast from 'wepy-com-toast'
+    import xnricon from 'xnr-icon'
+
+    export default class GoodsInfo extends wepy.page{
+        config = {
+            navigationBarTitleText: '商品详情'
+        }
+        components = {
+            carousel: Carousel,
+            toast: Toast,
+            xnricon1: xnricon,
+            xnricon2: xnricon,
+            xnricon3: xnricon,
+        }
+        data = {
+            selectBox: false, //控制规格选择框
+            skuStrs: [],
+            addLib: true,
+            sku: {},
+            price: 0,
+            mask: true,
+            count: 1,
+            reg: /^[0-9]{1,}$/,
+            stock: 0,
+            btnText: '',
+            selectColor: [],
+            selectStr: [],
+            carouselConfig:{
+                imgUrls: [],
+                dotsColor: '#d9524f',
+                dotsActiveColor: '#fff'
+            },
+            goodsInfoData: {},
+            goodsMsg: {
+                items: [],
+                config_id: '',
+                source: '',
+                openid: ''
+            }
+        }
+
+        methods = {
+            catch(){
+                //无用事件阻止点击内容的冒泡行为
+            },
+            goTo(e){
+                console.log(11111)
+                const url = e.currentTarget.dataset.url
+                console.log(1,url)
+                wepy.navigateTo({
+                    url: url,
+                    fail: res => {
+                        wx.switchTab({
+                            url: `${url}`
+                        })
+                    }
+                })
+            },
+            openTel(e){
+                if(wx.getStorageSync('openid')) {
+                    wx.request({
+                        url: `${this.api_host}/restapi/productlikes`,
+                        method: 'POST',
+                        data: {
+                            config_id: this.config_id,
+                            type: '电商',
+                            product_id: this.id,
+                            openid: wx.getStorageSync('openid')
+                        },
+                        success: (res) => {
+                            console.log(res)
+                            wx.showToast({
+                                title: '已加入收藏',
+                                icon: 'true',
+                                duration: 1000,
+                                mask: true
+                            })
+                        }
+                    })
+                } else {
+                    this.$invoke('modal', 'show', {     //没有openid让用户授权
+                        content: '您还没有授权登录',
+                        specialType: 'getUserInfo',
+                        specialText: '登录',
+                        showCancel: true,
+                        success: (res) => {
+                            if(res.confirm) {
+                                if(res.data.userInfo){
+                                    this.$parent.getUserInfo()
+                                }
+                            }
+                        }
+                    })
+                }
+            },
+            addLib(e){ //加入购物车按钮
+                this.selectBox = true
+                this.btnText = '加入购物车'
+                this.addLib = true
+            },
+            payBtn(e){//购买按钮
+                this.selectBox = true
+                this.btnText = '立即购买'
+                this.addLib = false
+            },
+            cancelBox(e){
+                this.selectBox = false
+            },
+            selectAdd(e){
+                const parentIndex = e.currentTarget.dataset.index
+                const itemIndex = e.currentTarget.dataset.itemid
+                const value = e.currentTarget.dataset.value
+                this.selectStr[parentIndex] = value
+                this.selectColor[parentIndex] = itemIndex
+                let inx = this.getSku({
+                    data: this.skuStrs,
+                    search: this.selectStr.join('')
+                })
+                this.sku = this.goodsInfoData.sku[inx]
+                console.log(this.sku)
+                console.log(inx)
+                if(!this.sku) return
+                this.price = retainedDecimalMoney(this.sku.price, 2)
+                this.goodsId = this.goodsInfoData.id
+                this.$apply()
+            },
+            shoppingBtn(e){
+                if(this.goodsInfoData.props){
+                    console.log(this.sku)
+                    if(JSON.stringify(this.sku) == '{}' || !this.sku){
+                        this.$invoke('toast', 'show', {
+                            title: '请选择规格',
+                            imgClassName: 'iconfont icon-shibaibiaoqing toast_size'
+                        })
+                        return
+                    }
+                }
+                const newGoodsMsg = {
+                    goods_id: this.goodsInfoData.id,
+                    goods_name: this.goodsInfoData.name,
+                    skucode: this.sku.skucode,
+                    props: this.selectStr.join(' '),
+                    price: this.sku.price || this.goodsInfoData.price.substr(1),
+                    quantity: this.count,
+                    stock: this.sku.stock || this.goodsInfoData.stock,
+                    thumb: this.sku.img ? `${this.api_host}${this.sku.img[0]}` : this.goodsInfoData.thumb,
+                    allPrice: this.price
+                }
+                console.log('newGoodsMsg', newGoodsMsg)
+                if(this.addLib){ //判断是添加购物车还是立即购买 addLib 成立时是添加购物车
+                    this.selectBox = false
+                    let selected = wepy.getStorageSync('selectedGoods')
+                    if(selected){
+                        //判断本地是否存在已加入购物车的商品 已有的话取出数据在items上push新商品如果skucode相同 和 goods_id相同就增加数量
+
+                        for(let i = 0, len = selected.items.length; i < len; i++){
+                            let item = selected.items[i]
+                            if(item.skucode == newGoodsMsg.skucode && item.goods_id == newGoodsMsg.goods_id){
+                                selected.items[i].quantity = item.quantity + newGoodsMsg.quantity
+                                const total = item.quantity * newGoodsMsg.price
+                                selected.items[i].total = retainedDecimalMoney(total)
+                                wepy.setStorageSync('selectedGoods', selected)
+                                wepy.showToast({
+                                    title: '加入成功'
+                                })
+                                return
+                            }
+                        }
+                        selected.items.push(newGoodsMsg)
+                        wepy.setStorageSync('selectedGoods', selected)
+                    }else{
+                        this.goodsMsg.items[0] = newGoodsMsg
+                        wepy.setStorageSync('selectedGoods', this.goodsMsg)
+                    }
+                    wepy.showToast({
+                        title: '加入成功'
+                    })
+                }else{
+                    wepy.setStorageSync('payGoods', [newGoodsMsg])
+                    wepy.navigateTo({
+                        url: `payment`
+                    })
+                }
+            },
+            reduce(){
+                this.count--
+                this.count = this.count < 1 ? 1 : this.count
+                const price = this.sku.price || this.goodsInfoData.price.substr(1)
+                let allPrice = price * this.count
+                this.price = retainedDecimalMoney(allPrice)
+                this.$apply()
+            },
+            plus(){
+                this.count++
+                this.count = this.count > this.stock ? this.stock : this.count
+                const price = this.sku.price || this.goodsInfoData.price.substr(1)
+                let allPrice = price * this.count
+                this.price = retainedDecimalMoney(allPrice)
+                this.$apply()
+            },
+            telChange(e){
+                this.$broadcast('phoneNum', e.detail.value)
+            },
+            inputChange(e){
+                let val = e.detail.value
+                if(!this.reg.test(val)){
+                    wepy.showToast({
+                        title: `只能输入数字哟`,
+                        icon: 'none',
+                        duration: 2000
+                    })
+                }
+                if(val > this.stock){
+                    wepy.showToast({
+                        title: `库存不足,最大${this.stock}`,
+                        icon: 'none',
+                        duration: 2000
+                    })
+                    this.count = this.stock
+                }else if(val < 1){
+                    wepy.showToast({
+                        title: `最少要选一个哟`,
+                        icon: 'none',
+                        duration: 2000
+                    })
+                }
+                this.count = val
+                // this.$apply()
+            },
+            inputBlur(){
+                if(!this.reg.test(this.count)){
+                    this.count = 1
+                }
+                this.count = this.count > this.stock ? this.stock : this.count < 1 ? 1 : this.count
+                this.$apply()
+            }
+        }
+        getSku(obj, inx) {
+            let indexs = []; //匹配到的索引集合
+            let reg = new RegExp(`${obj.search}`)
+            let strs = [] //匹配到的字符串集合
+            obj.data.forEach((item, index) => {
+                if (reg.test(item)) {
+                    strs.push(item);
+                    obj.index ? indexs.push(obj.index[index]) : indexs.push(index)
+                }
+
+            })
+            return indexs[0]
+            // var strs = [] //匹配到的字符串集合
+            // var indexs = []; //匹配到的索引集合
+            // var num = inx || 0
+            // obj.data.forEach((item, index) => {
+            //     console.log(obj.search[num])
+            //     if (item.indexOf(obj.search[num]) != -1) {
+            //         strs.push(item);
+            //         obj.index ? indexs.push(obj.index[index]) : indexs.push(index)
+            //     }
+
+            // })
+            // if (strs.length > 1) {
+            //     num++;
+            //     return this.getSku({
+            //         data: strs, //进行匹配的全部字符串 集合
+            //         search: obj.search, //需要匹配的字符串
+            //         index: indexs //匹配到的索引集合
+            //     }, num)
+            // } else {
+            //     return indexs[0]
+            // }
+        }
+        getGoodsInfoData(){
+            wepy.request({
+                url: `${this.api_host}/restapi/goods/${this.id}`,
+                methods: 'GET',
+                data: {
+                    config_id: this.config_id,
+                },
+                success: (res) => {
+                    let imgs
+                    if(res.data.data.imgs && res.data.data.imgs.length > 0){
+                        imgs = res.data.data.imgs
+                    }else{
+                        imgs = res.data.data.thumb
+                    }
+                    const data = res.data.data
+                    // 轮播图
+                    if(Array.isArray(imgs)){
+                        imgs.forEach( item => {
+                            this.carouselConfig.imgUrls.push(`${this.img_host}${item}`)
+                        });
+                        this.carouselConfig.mode = 'aspectFill'
+                        this.$apply()
+                    }else{
+                        imgs = imgs.indexOf('http') > -1 ? imgs : `${this.img_host}${imgs}`
+                        this.carouselConfig.imgUrls.push(imgs)
+                        this.carouselConfig.dots = false
+                        this.carouselConfig.mode = 'aspectFill'
+                        this.$apply()
+                    }
+
+                    this.goodsInfoData.name = data.name
+                    this.goodsInfoData.id = data.id
+                    this.goodsInfoData.detail = data.detail
+                    this.goodsInfoData.price = this.retainedDecimalMoney(data.price, 2)
+                    this.goodsInfoData.market_price = this.retainedDecimalMoney(data.market_price, 2)
+                    this.goodsInfoData.stock = data.stock
+                    this.stock = data.stock
+                    this.goodsInfoData.sales = data.sales
+                    this.goodsInfoData.thumb = Array.isArray(imgs) ? imgs[0].indexOf('http') > -1 ? imgs[0] : `${this.img_host}${imgs[0]}` : ''
+                    this.goodsInfoData.props = data.props
+                    this.goodsInfoData.sku = data.sku
+                    this.price = this.retainedDecimalMoney(data.price, 2)
+                    data.sku && data.sku.forEach( item => {
+                        let str = ''
+                        item.value.forEach( i => {
+                            str += i.value
+                        });
+                        this.skuStrs.push(str)
+                    })
+                    wxParse.wxParse('detailEle', 'html', data.detail, this)
+                    this.$apply()
+                    wepy.hideLoading()
+                }
+            })
+        }
+        retainedDecimalMoney(num, several){
+            if(typeof num !== 'string') num = num.toString()
+            const price = num.indexOf('.') > -1 ? `￥${parseFloat(num).toFixed(several)}` : num > 0 ? `￥${num}.00` : '￥0'
+            return price
+        }
+        getExtJson(){
+            if (wepy.getExtConfigSync) {
+                const extConfig = wepy.getExtConfigSync();
+                this.api_host = extConfig.api_host
+                this.img_host = extConfig.img_host
+                this.config_id = extConfig.config_id
+                this.merchant_id = extConfig.merchant_id
+            }
+        }
+        onHide(){
+            this.selectBox = false;
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(option){
+            wepy.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            this.id = option.id
+            this.getExtJson()
+            this.getGoodsInfoData()
+
+
+        }
+    }
+
+</script>
+
+

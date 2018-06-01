@@ -1,0 +1,127 @@
+<style lang="scss">
+    .price,
+    .price__icon,
+    .price__count {
+        display: inline-block;
+        line-height: 1;
+    }
+
+    .price__icon--sup,
+    .price__icon--sub {
+        font-size: 52%;
+    }
+
+    .price__icon--sup {
+        vertical-align: super;
+        line-height: 1.1;
+    }
+
+    .price__icon--del,
+    .price__count--del {
+        font-weight: normal;
+        text-decoration: line-through;
+    }
+
+    .count__decimal--small {
+        display: inline;
+        font-size: 62%;
+    }
+</style>
+
+<template>
+    <view class="price price__status--{{status}}">
+        <view class="price__icon price__icon--{{icon}} price__icon--{{status}}">{{symbol}}</view>
+        <view class="count price__count price__count--{{status}}">
+            <slot wx:if="{{!value}}"></slot>
+
+            {{value && decimal !== 'small' ? value : ''}}
+
+            <text wx:if="{{value && decimal === 'small'}}">{{value}}</text>
+            <text wx:if="{{value && decimal === 'small'}}" class="count__decimal--small">.{{decimalNum}}</text>
+        </view>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class Price extends wepy.component {
+        props = {
+            status: {
+                type: String,
+                coerce: val => val
+            },
+            value: {
+                type: String,
+                coerce: val => val
+            },
+            symbol: {
+                type: String,
+                coerce: val => val,
+                default: '￥'
+            },
+            icon: {
+                type: String,
+                coerce: val => val
+            },
+            decimal: {
+                type: String,
+                coerce: val => val
+            }
+        }
+        data = {
+            decimalNum: '',
+            valueNone: ''
+        }
+        getDecimal(priceNum, len, dir) {
+            if (!priceNum || !len) {
+                return false;
+            }
+
+            dir = dir || 'f';
+            priceNum = parseFloat(priceNum, 10);
+            len = parseInt(len, 10);
+
+            if (dir === 'f') {
+                var intNumStr = priceNum.toString().split('.')[0];
+                var decimalNumStr = priceNum.toString().split('.')[1] || '00';
+                if (decimalNumStr.length < 2) {
+                decimalNumStr += '0';
+                }
+                console.log(decimalNumStr)
+                console.log(priceNum)
+                return intNumStr + '.' + decimalNumStr.substring(0, len);
+            } else {
+                return priceNum.toFixed(len);
+            }
+        }
+        onLoad(){
+            console.log(this)
+            switch (this.decimal) {
+
+                // 保留一位小数
+                case '1':
+                    this.value = this.getDecimal(this.value, 1);
+                    break;
+
+                // 只显示整数
+                case 'none':
+                    this.value = parseInt(this.value);
+                    break;
+
+                // 小数部分缩小
+                case 'small':
+                    this.value = parseInt(this.value).toString().trim();
+                    this.decimalNum = (this.value.toString().split('.')[1] || '00').trim()
+                    break;
+                default:
+                    this.value = this.getDecimal(this.value, 2);
+                    break;
+            }
+            this.$apply()
+        }
+    }
+</script>
+
+

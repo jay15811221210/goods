@@ -1,0 +1,152 @@
+<style type="scss">
+    .carousel {
+        width: 100%;
+        height: 422rpx;
+        .section_img {
+            padding: 20rpx 20rpx 0;
+            .sec_img{
+                width: 100%;
+            }
+        }
+    }
+    .dots_wrap_center {
+        display: none;
+    }
+    .scroll_tab_wrap{
+        border-bottom: 17rpx solid #fff;
+    }
+    .scroll_tab_cont{
+        height: 88rpx;
+        line-height: 88rpx;
+    }
+</style>
+
+<template>
+    <view class="carousel">
+        <!-- 轮播图 -->
+        <carousel :carouselConfig.sync="carouselConfig"></carousel>
+
+        <!--广告-->
+        <view class="section_img" @tap="bannerImg" wx:for="{{sectionImg}}" wx:key="{{index}}" data-url="{{item.page}}">
+            <image class="sec_img" mode="widthFix" src="{{item.iurl}}"></image>
+        </view>
+        
+        <!-- 导航 -->
+        <nav :navConfig.sync="navConfig"></nav>
+
+        <!--商品分类-->
+        <commodity :commodity.sync="commodity"></commodity>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Carousel from 'xnr-swiper'
+    import getExtJson from '../assets/getExtJson'
+    import Nav from '../components/Nav'
+    import Commodity from '../components/Commodity'
+
+    export default class extends wepy.page {
+        components = {
+            carousel: Carousel,
+            nav: Nav,
+            commodity: Commodity
+        }
+        data = {
+            carouselConfig: {
+                imgUrls: [],
+            },
+            navConfig: [],
+            commodity: [],
+            sectionImg: []
+
+        }
+
+
+        methods = {
+            bannerImg(e) {
+                let url=e.currentTarget.dataset.url
+                wx.navigateTo({
+                    url: `${url}`,
+                    fail: res => {
+                        wx.switchTab({
+                            url: `${url}`
+                        })
+                    }
+                })
+            }
+        }
+
+        onLaunch() {
+        }
+
+        // 获取菜单数据
+        getMenu(data) {
+            if (wx.getExtConfig) {
+                wx.getExtConfig({
+                    success: (res) => {
+                        // pages/article
+                        const menu = this.menu.map((item) => {
+                            let url = item.page.split('?')
+                            let obj
+                            if (url[1]) {
+                                obj = {}
+                                let key = url[1].split('=')[0]
+                                let val = url[1].split('=')[1]
+                                obj[key] = val
+                            }
+                            return {
+                                imgUrl: `${this.img_host}${item.icon}`,
+                                navText: item.name,
+                                navTo: url[0],
+                                query: obj
+                            }
+                        })
+                        menu && (this.navConfig = menu)
+                        this.$apply()
+                    }
+                })
+            }
+        }
+
+        // 轮播图数据请求
+        getCarousel() {
+            wx.request({
+                url: `${this.api_host}/restapi/wechat-focus`,
+                data: {
+                    config_id: this.config_id,
+                    belongs: 1,
+                    type: 0
+                },
+                success: (res) => {
+                    const data = res.data.data.map((item) => {
+                        return `${this.img_host}${item.image}`
+                    })
+                    this.carouselConfig.imgUrls = data
+                    this.$apply()
+                }
+            })
+        }
+        onLoad() {
+            getExtJson.call(this)
+            /*
+      * 通过ext.json传入的swiper 数据 修改轮播图的样式
+      * */
+            if (this.swiper) {
+                for (let i in this.swiper) {
+                    this.carouselConfig[i] = this.swiper[i]
+                }
+            }
+             this.sectionImg.forEach((item) =>{
+                item.iurl=`${this.img_host}${item.iurl}`
+
+            })
+              this.commodity.forEach((item) =>{
+                item.url=`${this.img_host}${item.url}`
+            })
+            this.getMenu()
+            this.getCarousel()
+            this.$apply()
+        }
+
+    }
+</script>

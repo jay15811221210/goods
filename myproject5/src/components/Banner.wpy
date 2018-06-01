@@ -1,0 +1,122 @@
+
+<style lang="scss">
+
+    .banner{
+        &_wrap{
+            
+        }
+        &_long{
+            height: 300rpx;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            .logo{
+                width: 125rpx;
+                height: 125rpx;
+                border-radius: 50%;
+                margin-bottom: 8rpx;
+                background: {
+                    size: cover;
+                    position: center center;
+                    repeat: no-repeat;
+                }
+                display: inline-block;
+            }
+            .name{
+                color: #fff;
+                font-size: 32rpx;
+            }
+            .cont_wrap{
+                
+            }
+        }
+        &_small{
+            height: 200rpx;
+            position: relative;
+            .logo{
+                width: 100rpx;
+                height: 100rpx;
+                background: {
+                    size: cover;
+                }
+                margin-right: 14rpx;
+            }
+            .cont_wrap{
+                position: absolute;
+                left: 30rpx; bottom: 30rpx;
+                display: flex;
+                line-height: 100rpx;
+                color: #fff;
+            }
+        }
+        &_cont{
+            
+            background: {
+                size: cover;
+                repeat: no-repeat;
+            }
+        }
+    }
+
+</style>
+
+<template>
+    
+    <view class="banner_wrap" wx:if="{{display}}">
+
+        <view class="banner_cont {{isbig ? 'banner_small' : 'banner_long'}}" style="background-image: url({{bgImg}}); height: {{height}}rpx">
+            <view class="cont_wrap">
+                <view class="logo" style="background-image: url({{icon}})"></view>
+                <view class="name" style="color: {{color}}">
+                    {{name}}
+                </view>
+            </view>
+        </view>
+
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class Banner extends wepy.component {
+        
+        props = {
+            name: {
+                type: String,
+                coerce: val => val
+            },
+            icon: {
+                type: String,
+                coerce: val => val
+            },
+            bgImg: {
+                type: String,
+                coerce: val => val
+            },
+            isbig: {
+                type: Boolean,
+                coerce: val => val
+            },
+            display: {
+                type: Boolean,
+                coerce: val => val
+            },
+            color: {
+                type: String,
+                coerce: val => val
+            },
+            height: {
+                type: String,
+                coerce: val => val
+            }
+        }
+
+    }
+
+</script>
+
+

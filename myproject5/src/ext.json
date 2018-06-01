@@ -1,0 +1,162 @@
+{
+  "extEnable": true,
+  "extAppid": "wx8b963b9cfc19aabf",
+  "directCommit": false,
+  "ext": {
+    "flag": [
+      {
+        "tag": "\u5546\u54c1\u680f",
+        "flag": "1",
+        "num": 6,
+        "style": 1
+      }
+    ],
+    "flag_display": true,
+    "banner": {
+      "display": true,
+      "logo": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201801\/15155725778653.jpg",
+      "name": "\u6c34\u679c\u738b\u8005",
+      "background": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251786763512.jpg",
+      "height": 300,
+      "isbig": false,
+      "color": "red"
+    },
+    "photos": [
+      {
+        "display": true,
+        "class": "Pimg",
+        "colstyle": 2,
+        "height": 500,
+        "img": [
+          {
+            "tpimg": "/image/cart.png",
+            "page": "BrandDetails/26?config_id=634"
+          },
+          {
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          },{
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "BrandDetails/26?config_id=634"
+          }
+        ]
+      },{
+        "display": true,
+        "class": "Pimg",
+        "colstyle": 3,
+        "height": 300,
+        "img": [
+          {
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "BrandDetails/26?config_id=634"
+          },
+          {
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          },{
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          }
+        ]
+      },{
+        "display": true,
+        "class": "Pimg",
+        "colstyle": 4,
+        "height": 260,
+        "img": [
+          {
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "BrandDetails/26?config_id=634"
+          },
+          {
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          },{
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          }
+        ,{
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          }
+        ,{
+            "tpimg": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201805\/15251787803097.jpg",
+            "page": "Brandlist"
+          }
+        ]
+      }
+    ],
+    "video":{
+      "display":false,
+      "height":350,
+      "page":""
+    },
+    "menu": [
+      {
+        "icon": "http://www1.xiaoniren.cn/upload/attachment/5/130/201804/15247141011025.png",
+        "name": "\u8054\u7cfb\u6211\u4eec",
+        "page": "category"
+      },
+      {
+        "icon": "http://www1.xiaoniren.cn/upload/attachment/5/130/201804/15247141011025.png",
+        "name": "\u516c\u53f8\u4ecb\u7ecd",
+        "page": "article?id=888"
+      },
+      {
+        "icon": "http://www1.xiaoniren.cn/upload/attachment/5/130/201804/15247141011025.png",
+        "name": "\u7559\u8a00\u8584",
+        "page": "gbook"
+      },
+      {
+        "icon": "http://www1.xiaoniren.cn/upload/attachment/5/130/201804/15247141011025.png",
+        "name": "\u5730\u56fe\u5bfc\u822a",
+        "page": "map"
+      }
+    ],
+    "discounts": true,
+    "menu_display": true,
+    "swiper": {
+      "display": true,
+      "dots": true,
+      "loop": true,
+      "maskStatus": false,
+      "SwNume": 1,
+      "interval": 3000,
+      "list": [
+        {
+          "link": "http:\/\/www1.xiaoniren.cn\/upload\/attachment\/5\/130\/201804\/15248286058931.jpg",
+          "name": "\u5c71\u6c34",
+          "page": "page"
+        },
+        {
+          "link": "http:\/\/pic1.16pic.com\/00\/04\/84\/16pic_484482_b.jpg",
+          "name": "\u5c71\u6c342",
+          "page": "page2"
+        },
+        {
+          "link": "https:\/\/timgsa.baidu.com\/timg?image&quality=80&size=b9999_10000&sec=1515130074404&di=4950a6ac4f82591cc69415135c286157&imgtype=0&src=http%3A%2F%2Fpic6.photophoto.cn%2F20080102%2F0021033853002313_b.jpg",
+          "name": "\u5c71\u6c343",
+          "page": "page3"
+        }
+      ]
+    },
+    "router": {
+      "category": "categorySearch",
+      "categoryDetail": "categoryInfoTopScroll"
+    },
+    "config_id": 634,
+    "merchant_id": 130,
+    "api_host": "https:\/\/www.xiaoniren.cn",
+    "img_host": "http:\/\/www.xiaoniren.cn"
+  },
+  "extPages": {
+
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#B80000",
+    "navigationBarTitleText": "\u9996\u9875\u9ed8\u8ba4",
+    "navigationBarTextStyle": "white"
+  },
+  "networkTimeout": {}
+}

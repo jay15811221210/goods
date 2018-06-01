@@ -1,0 +1,177 @@
+
+<style lang="scss">
+
+    .modal{
+        &_wrap{
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        &_mask{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(0, 0, 0, .5);
+        }
+        &_cont{
+            width: 60%;
+            border-radius: 24rpx;
+            overflow: hidden;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -30%;
+            margin-top: -30%;
+        }
+        &_tit{
+            $height: 80rpx;
+            height: $height;
+            line-height: $height;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 16rpx;
+            font-size: 32rpx;
+            border-bottom: 1px solid #dedede;
+        }
+        &_context{
+            padding: 16rpx;
+            font-size: 28rpx;
+            text-align: center;
+        }
+        &_btns{
+            $height: 70rpx;
+            height: $height;
+            line-height: $height;
+            text-align: center;
+            border-top: 1px solid #dedede;
+            display: flex;
+            font-size: 32rpx;
+            view,
+            button{
+                flex: 1;
+                
+            }
+            button{
+                &:after{
+                    content: none;
+                }
+                position: static;
+                padding: 0;
+                color: inherit;
+                line-height: inherit;
+                font-size: inherit;
+            }
+            view:first-child{
+                border-right: 1px solid #dedede;
+            }
+        }
+    }
+
+</style>
+
+<template>
+
+    <view class="modal_wrap" wx:if="{{modalShow}}" @tap="hideModal">
+
+        <!-- 遮罩层 -->
+        <view class="modal_mask" wx:if="{{mask}}"></view>
+
+        <!-- 提示框 -->
+        <view class="modal_cont" catchtap="catch" style="{{!mask ? 'border: 1px solid #ccc' : ''}}">
+            <view wx:if="{{title}}" class="modal_tit">
+                {{title}}
+            </view>
+            <view class="modal_context">
+                {{content}}
+            </view>
+            <view class="modal_btns">
+                <view wx:if="{{showCancel}}" style="background-color: {{cancelBgColor}};color: {{cancelColor}}" @tap="cancel">
+                    {{cancelText}}
+                </view>
+                <view wx:if="{{!specialType}}" style="background-color: {{confirmBgColor}}" @tap="confirm">
+                    {{confirmText}}
+                </view>
+                <view wx:if="{{specialType}}" @tap="hideModal">
+                    <button open-type="{{specialType}}" style="background-color: {{specialColor}}" @getuserinfo="getUserInfo" >
+                        {{specialText}}
+                    </button>
+                </view>
+                
+            </view>
+        </view>
+
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    export default class Modal extends wepy.component{
+        data = {
+            modalShow: false,
+            mask: true,
+            title: '',
+            content: '',
+            cancelText: '取消',
+            cancelBgColor: '#fff',
+            cancelColor: '#333',
+            confirmText: '确定',
+            confirmBgColor: '#fff',
+            confirmColor: '#0f0',
+            specialType: '',
+            specialColor: '',
+            specialBgColor: '#fff',
+            specialText: '',
+            showCancel: true
+        }
+        methods = {
+            catch(){},
+            hideModal(){
+                this.hide()
+            },
+            confirm(){
+                let obj = {
+                    confirm: true
+                }
+                this.hide()
+                typeof this.success === 'function' ? this.success(obj) : null
+            },
+            cancel(){
+                let obj = {
+                    cancel: true
+                }
+                this.hide()
+                typeof this.success === 'function' ? this.success(obj) : null
+            },
+            getUserInfo(e){
+                let obj = {
+                    confirm: true,
+                    data: e.detail
+                }
+                typeof this.success === 'function' ? this.success(obj) : null
+            }
+        }
+        hide(){
+            this.modalShow = false
+            this.$apply()
+        }
+        show(data = {}){
+            this.modalShow = true
+            for(let i in data){
+                this[i] = data[i]
+            }
+            this.content = this.content ? this.content.substr(0, 60) : ''
+            this.$apply()
+        }
+    }
+</script>
+
+

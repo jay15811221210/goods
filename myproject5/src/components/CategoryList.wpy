@@ -1,0 +1,65 @@
+
+<style lang="scss">
+    
+    .goods{
+        &_title{
+            font-size: 32rpx;
+            text-align: center;
+            line-height: 80rpx;
+        }
+        &_part{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .long{
+                width: 100%!important;
+                flex-shrink: 0;
+            }
+            .small{
+                width: 49%;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="goods_list">
+        <view class="goods_title">
+            <slot name="title"></slot>
+        </view>
+        <view class="goods_part">
+            <repeat for="{{goodsListConfig.listData}}">
+                <part :partConfig.sync="item"></part>
+            </repeat>
+        </view>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import Part from '../components/CategoryPart'
+
+    export default class GoodsList extends wepy.component {
+        data = {
+            partConfig: null
+        }
+        props = {
+            goodsListConfig: {}
+        }
+        watch = {
+            partConfig(q){
+                console.log(q)
+            },
+            goodsListConfig(newVal){
+                console.log(newVal)
+            }
+        }
+        components = {
+            part: Part
+        }
+        onLoad(option){
+            
+        }
+    }
+</script>

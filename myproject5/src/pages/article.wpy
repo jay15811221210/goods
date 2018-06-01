@@ -1,0 +1,99 @@
+
+<style lang="scss">
+    
+    @import '../assets/wxParse/wxParse.wxss';
+
+    .article{
+
+        &_title_img{
+            padding-bottom: 10rpx; 
+            image{
+                width: 100%;
+                display: block;
+            }
+        }
+        
+        &_info{
+            padding: 12rpx 30rpx;
+            image{
+                width: 100%;
+            }
+            view{
+                max-width: 100%;
+            }
+        }
+
+    }
+
+</style>
+
+<template>
+    
+    <view class="article_wrap">
+        <import src="../assets/wxParse/wxParse.wxml"></import>
+
+        <view class="article_title_img" wx:if="{{titleImg}}">
+            <image mode="widthFix" src="{{titleImg}}"></image>
+        </view>
+
+        <view class="article_info">
+            <template is="wxParse" data="{{wxParseData: articleEle.nodes}}"></template>
+        </view>
+        
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import wxParse from '../assets/wxParse/wxParse'
+
+    export default class Article extends wepy.page{
+        
+        data = {
+            api_host: '',
+            img_host: '',
+            config_id: '',
+            titleImg: ''
+        }
+
+        getArticle(id){
+            wepy.request({
+                url: `${this.api_host}/restapi/wechat-pages/${id}`,
+                data: {
+                    config_id: this.config_id
+                },
+                success: (res) => {
+                    wepy.setNavigationBarTitle({
+                        title: res.data.data.title
+                    })
+                    let info = res.data.data.content
+                    this.titleImg = `${this.img_host}${res.data.data.image}`
+                    this.$apply()
+                    info = info.replace(/<img( alt="[\s|a-z|A-Z|0-9|\u4e00-\u9fa5]*")? src="\//g, `<img src="${this.img_host}/`)
+                    wxParse.wxParse('articleEle', 'html', info, this)
+                }
+            })
+        }
+        getExtJson(id){
+            if (wepy.getExtConfigSync) {
+                const extConfig = wepy.getExtConfigSync();
+                this.api_host = extConfig.api_host
+                this.img_host = extConfig.img_host
+                this.config_id = extConfig.config_id
+                this.merchant_id = extConfig.merchant_id
+                this.getArticle(id)
+            }
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(option){
+            // 获取商家信息及地址
+            this.getExtJson(option.id)
+        }
+
+    }
+    
+</script>

@@ -1,0 +1,75 @@
+<style lang="scss">
+
+    .goods {
+        &_part {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .long {
+                width: 100%;
+                flex-shrink: 0;
+            }
+            .small {
+                width: 33%;
+            }
+        }
+    }
+    .goods_title {
+        font-size: 34 rpx;
+        text-align: left;
+        line-height: 32rpx;
+        border-left: 4rpx solid #333333;
+        color: #333333;
+        text-indent: 20rpx;
+    }
+</style>
+
+<template>
+    <view>
+        <view class="goods_title">
+            <view>推荐商品</view>
+        </view>
+        <view class="goods_list">
+            <view class="goods_part">
+                <repeat for="{{goodsListConfig.listData}}" wx:if="{{index<3}}">
+                    <!--<part :partConfig.sync="item"></part>-->
+                    <three-part :partConfig.sync="item"></three-part>
+                </repeat>
+            </view>
+        </view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    //    import Part from '../components/Part'
+    import ThreePart from '../components/ThreePart'
+
+
+    export default class GoodsList extends wepy.component {
+        data = {
+            partConfig: null
+        }
+        props = {
+            goodsListConfig: {}
+        }
+        watch = {
+            partConfig(q) {
+                console.log(1,q)
+            },
+            goodsListConfig(newVal) {
+                console.log(2,newVal)
+            }
+        }
+        components = {
+//            part: Part,
+            'three-part': ThreePart
+        }
+
+        onLoad(option) {
+
+        }
+    }
+</script>

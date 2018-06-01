@@ -1,0 +1,98 @@
+{
+  "extEnable": true,
+  "extAppid": "wx38f46ade076245fd",
+  "directCommit": false,
+  "ext": {
+    "config_id": 634,
+    "merchant_id": 130,
+    "api_host": "http://www.xiaoniren.cn",
+    "img_host": "http://www.xiaoniren.cn",
+    "style": "#fc3e62",
+
+    "sectionImg": [
+      {
+        "iurl": "/upload/wechatpage/icon/201801/15166940712843.png",
+        "page": "productlist"
+      }
+    ],
+    "menu": [
+      {
+        "name": "全部商品",
+        "icon": "/upload/wechatpage/icon/201801/15166940712843.png",
+        "page": "productlist"
+      },
+      {
+        "name": "品牌优选",
+        "icon": "/upload/wechatpage/icon/201801/15166940532650.png",
+        "page": "Brandlist"
+      },
+      {
+        "name": "秒杀",
+        "icon": "/img/weapp_img/menu_icon/icon_gbook.png",
+        "page": "discount?type=1"
+      },
+      {
+        "name": "拼团",
+        "icon": "/img/weapp_img/menu_icon/icon_map.png",
+        "page": "map"
+      }
+    ],
+    "flag": [
+      {
+        "tag": "\u6807\u98981",
+        "flag": 2,
+        "num": 4,
+        "style": []
+      }
+    ],
+    "swiper": {
+      "autoplay": true,
+      "interval": 2000,
+      "duration": 500,
+      "loop": true,
+      "dots": true,
+      "dotsColor": "#d9524f",
+      "dotsActiveColor": "#fff"
+    },
+    "router": {
+      "category": "categorySearch",
+      "categoryDetail": "categoryInfoTopScroll",
+      "goodsInfo": "",
+      "home": "index"
+    }
+  },
+  "extPages": {},
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#d53b33",
+    "backgroundColor": "#fff",
+    "borderStyle": "",
+    "list": [
+      {
+        "pagePath": "pages/index",
+        "text": "首页",
+        "iconPath": "./image/home.png",
+        "selectedIconPath": "./image/home-active.png"
+      },
+      {
+        "pagePath": "pages/productlist",
+        "text": "商品",
+        "iconPath": "./image/category.png",
+        "selectedIconPath": "./image/category-active.png"
+      },
+      {
+        "pagePath": "pages/member",
+        "text": "个人中心",
+        "iconPath": "./image/member.png",
+        "selectedIconPath": "./image/member-active.png"
+      }
+    ]
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fc3e62",
+    "navigationBarTitleText": "\u5c0f\u6ce5\u4eba\u6ed1\u96ea",
+    "navigationBarTextStyle": "#fff"
+  },
+  "networkTimeout": {}
+}

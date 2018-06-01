@@ -1,0 +1,167 @@
+<style lang="scss">
+	.countdown {
+		display: flex;
+		flex-flow: row nowrap;
+		&_item {
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: center;
+		}
+	}
+</style>
+
+<template>
+	<view class="countdown">
+
+		<repeat for="{{timeItems}}">
+			<view class="countdown_item">
+				<view class="countdown_item--num" style="{{numStyle}}">{{item.num}}</view>
+				<view class="countdown_item--symbol" style="{{symbolStyle}}">{{item.symbol}}</view>
+			</view>
+		</repeat>
+		
+	</view>
+</template>
+
+<script>
+
+	import wepy from 'wepy'
+
+	export default class Countdown extends wepy.component  {
+		props = {
+			countdown: {
+				type: Number,
+				coerce: val => {
+					console.log(val)
+					return val
+				},
+				default: 0,
+			},
+			format: {
+				type: String,
+				coerce: val => val,
+				default: 'dd天hh时mm分ss秒'
+			},
+			numStyle: {
+				type: String,
+                coerce: val => val,
+				default: ''
+			},
+			symbolStyle: {
+				type: String,
+                coerce: val => val,
+				default: ''
+			}
+		}
+		data = {
+			computeTime: 0,
+			endTimeMs: 0,
+			timeItems: [],
+            endTimeMs: 0,
+            _timer: null,
+            computeTime: 0
+		}
+		
+		methods = {
+			
+		}
+		init() {
+			let now = Date.now()
+			this.endTimeMs = now + this.countdown * 1000;
+            if(this.endTimeMs){
+                this.initCountdown()
+                console.log('thisEnd',this.countdown)
+            }
+		}
+		initCountdown() {
+			clearInterval(this._timer)
+			this._timer = null
+			const now = Date.now()
+			
+			let computeTimeMs = this.endTimeMs - now;
+			let timeout = computeTimeMs % 1000 || 0;
+
+			this._timer = setTimeout(() => {
+				this.initCountdown();
+			}, timeout)
+			this.setCountdownTimeItems(computeTimeMs);
+		}
+		setCountdownTimeItems(computeTimeMs) {
+			this.computeTime = parseInt(Math.ceil(computeTimeMs / 1000));      
+			this.emitRunCount(this.computeTime);
+
+			if (this.computeTime <= 0) {
+				clearInterval(this._timer);
+				this.emitEndCount();
+			}
+
+			this.timeItems = this.getTimeItems(this.computeTime, this.format);
+			this.$apply()
+		}
+		getTimeItems(computeTime, format) {
+			if (computeTime < 0) {
+				computeTime = 0;
+			}
+			let arr = format.match(/[a-zA-Z]{1,3}/g) || [];
+			let symbolArr = format.match(/[\u4e00-\u9fa5]+|[^a-zA-Z]/g) || [];
+			let time = this.getTime(computeTime, format);
+			return arr.map((item, i) => {
+				return {
+					num: time[item],
+					symbol: symbolArr[i],
+				}
+			})
+		}
+		getTime(leftseconds, format) {
+			let d = leftseconds;
+			let [s, m, h] = [60, 60, 24].map((unit) => {
+				let num = d % unit;
+				d = Math.floor(d / unit);
+				return num;
+			})
+
+			if (leftseconds > 86400 && format.indexOf('d') === -1) {
+				h += d * 24;
+			}
+
+			if (leftseconds > 3600 && format.indexOf('h') === -1) {
+				m += h * 60;
+			}
+
+			if (leftseconds > 60 && format.indexOf('m') === -1) {
+				s += m * 60;
+			}
+
+			return {
+				dd: this.formatTime(d),
+				hh: this.formatTime(h),
+				mm: this.formatTime(m),
+				ss: this.formatTime(s),
+				d,
+				h,
+				m,
+				s
+			}
+		}
+		formatTime(val) {
+			return val < 10 ? `0${val}` : val;
+		}
+		emitRunCount(date) {
+			this.$emit('runcount', {
+				computeTime: date
+			})
+		}
+
+		emitEndCount() {
+			this.$emit('endcount');
+		}
+		onLoad(){
+			console.log(this.countdown)
+			console.log(this.format)
+			console.log(this)
+			this.init()
+		}
+		
+	}
+
+</script>

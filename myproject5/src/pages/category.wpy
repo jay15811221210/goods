@@ -1,0 +1,46 @@
+
+<style lang="scss">
+
+</style>
+
+<template>
+    <view>
+        <display-window wx:if="{{viewEle == 'window'}}"></display-window>
+        <category-search wx:if="{{viewEle == 'search'}}"></category-search>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import CategoryDisplayWindow from '../components/CategoryDisplayWindow'
+    import CategorySearch from '../components/categorySearch'
+    import getExtJson from '../assets/getExtJson'
+
+    export default class Category extends wepy.page {
+        config = {
+            navigationBarTitleText: '商品分类'
+        }
+        components = {
+            'display-window': CategoryDisplayWindow,
+            'category-search': CategorySearch
+        }
+        data = {
+            viewEle: ''
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(){
+            getExtJson.call(this)
+            if(this.router.category == 'categorySearch'){
+                this.viewEle = 'search'
+            }else if(this.router.category == 'category') {
+                this.viewEle = 'window'
+            }
+        }
+    }
+
+</script>
+
+

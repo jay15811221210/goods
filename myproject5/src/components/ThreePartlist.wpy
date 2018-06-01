@@ -1,0 +1,168 @@
+<style lang="scss">
+    .goods {
+        &_part {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .long {
+                width: 100%;
+                flex-shrink: 0;
+            }
+        }
+    }
+
+    %price {
+        padding-right: 12rpx;
+        text:nth-of-type(1) {
+            font-size: 0.7em;
+        }
+    }
+
+    %clip {
+        font-size: 32rpx;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        box-sizing: border-box;
+    }
+    .part {
+        $c_padding: 10rpx;
+        $width: 160rpx;
+        &_wrap {
+            background-color: #fff;
+        }
+        &_long {
+            position: relative;
+            margin-bottom: 12rpx;
+            box-sizing: border-box;
+            padding: $c_padding;
+            &:after {
+                content: '';
+                display: block;
+                clear: both;
+            }
+            &_img {
+                width: $width;
+                height: $width;
+                background: {
+                    size: cover;
+                    position: center;
+                }
+                float: left;
+            }
+            &_text_wrap {
+                font-size: 32rpx;
+                margin-left: $width + $c_padding + 14;
+            }
+            &_text_top {
+                @extend %clip;
+            }
+        }
+        &_long_text_bottom {
+            width: 100%;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            padding-left: $width + $c_padding + 14;
+            box-sizing: border-box;
+        }
+        &_price_wrap {
+            display: flex;
+            line-height: 48rpx;
+            float: left;
+        }
+        &_price {
+            @extend %price;
+            color: #dd3333;
+        }
+        &_btns {
+            float: right;
+            background-color: #dd3333;
+            border-radius: 12rpx;
+            padding: 6rpx 20rpx;
+            margin-right: $c_padding;
+            font-size: 28rpx;
+            color: #fff;
+            margin-bottom: 12rpx;
+        }
+        &_small {
+            width: 100%;
+            background-color: #fff;
+            padding-bottom: 12rpx;
+            &_img {
+                width: 100%;
+                height: 244rpx;
+                background: {
+                    size: cover;
+                    position: center;
+                }
+            }
+            &_text_top {
+                @extend %clip;
+                -webkit-line-clamp: 2;
+                line-height: 50rpx;
+                padding: 0 12rpx;
+                font-size: 28rpx;
+            }
+        }
+    }
+
+    .advertisement_img {
+        width: 100%;
+        height: auto;
+    }
+
+    .sall {
+        width: 33%;
+    }
+    .part_img{
+        width:100%;
+        height:244rpx;
+        background-size:cover;
+        background-position:center;
+        image{
+            height: 244rpx;
+        }
+    }
+</style>
+
+<template>
+  <view class="part_wrap sall">
+    <view class="part_small" id="{{partConfig.id}}"  @tap="goTo">
+      <view class="part_img">
+        <image class="advertisement_img" mode="scaleToFill" src="{{partConfig.imgUrl}}"></image>
+      </view>
+      <view class="part_small_text_wrap">
+        <view class="part_small_text_top">
+          {{partConfig.title}}
+        </view>
+      </view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+
+  import wepy from 'wepy'
+  export default class ThreePartlist extends wepy.component {
+    props = {
+      partConfig: {}
+    }
+    methods = {
+      goTo(e){
+          console.log(e)
+        const id = e.currentTarget.id
+        wepy.navigateTo({
+          url: `goodsInfo?id=${id}`
+        })
+      }
+    }
+    onLoad(){
+
+    }
+  }
+
+</script>

@@ -1,0 +1,149 @@
+<style lang="scss">
+    page{
+        height: 100%;
+    }
+
+
+</style>
+
+<template>
+    <view>
+
+        <collections
+            wx:if="{{collection.length > 0 ? true : false}}"
+            @change.user="shoucangChange"
+            @skipDetails.user="skipDetails"
+            :collection.sync="collection"
+            :collectionStatus.sync="collectionStatus"
+            :color.sync="color"
+            :activeColor.sync="activeColor"
+        ></collections>
+
+        <abnor type="DATA" wx:if="{{collection.length > 0 ? false : true}}"></abnor>
+
+        <modal></modal>
+    </view>
+
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import Modal from '../components/Modal'
+    import Toast from 'wepy-com-toast'
+//    import Icon from '../components/Icon'
+    import getExtJson from '../assets/getExtJson'
+    import Collections from '../components/Collection'
+    import Abnor from 'xnr-abnor'
+
+    export default class Collection extends wepy.page{
+        config = {
+            navigationBarTitleText: '我的收藏'
+        }
+        components = {
+//            icon: Icon,
+            collections: Collections,
+            modal: Modal,
+            toast: Toast,
+            abnor: Abnor
+        }
+        data = {
+            color: '#ccc',
+            activeColor: 'red',
+            collection: [],
+            collectionStatus: []
+        }
+        /*
+        * 读取收藏列表
+        * */
+        getCollection() {
+            if(wx.getStorageSync('openid')) {
+                wx.request({
+                    url: `${this.api_host}/restapi/productlikes`,
+                    method: 'GET',
+                    data: {
+                        config_id: this.config_id,
+                        openid: wx.getStorageSync('openid'),
+                        type: '电商'
+                    },
+                    success: (res) => {
+                        console.log(res)
+                        res.data.data.forEach( item => {
+                            item.product.images = `${this.img_host}${item.product.thumb}`
+                            item.product.color = 'red'
+                            item.product.collectionId = item.id
+                            this.collection.push(item.product)
+                        })
+                        console.log(this.collection)
+                        this.$apply()
+                    }
+                })
+            } else {
+                this.$invoke('modal', 'show', {  //没有openid让用户授权
+                    content: '您还没有授权登录',
+                    specialType: 'getUserInfo',
+                    specialText: '登录',
+                    showCancel: true,
+                    success: (res) => {
+                        if(res.confirm) {
+                            if(res.data.userInfo){
+                                this.$parent.getUserInfo()
+                            }
+                        }
+                    }
+                })
+            }
+
+        }
+        methods = {
+
+            /*
+            * 子组件传过来的事件  (取消收藏)
+            * */
+            shoucangChange(e){
+                if(e.status) {
+                    wx.request({
+                        url: `${this.api_host}/restapi/productlikes/${e.collectionId}`,
+                        method: 'DELETE',
+                        data: {
+                            config_id: this.config_id
+                        },
+                        success: (res) => {
+                            console.log(res, '已删除')
+                        }
+                    })
+                } else {
+                    wx.request({
+                        url: `${this.api_host}/restapi/productlikes`,
+                        method: 'POST',
+                        data: {
+                            config_id: this.config_id,
+                            type: '餐饮',
+                            product_id: this.goodsId,
+                            openid: wx.getStorageSync('openid')
+                        },
+                        success: (res) => {
+                            console.log(res, '已加入')
+                        }
+                    })
+                }
+            },
+            /*
+            * 跳转到商品详情
+            * */
+            skipDetails(id, titleName) {
+                wx.navigateTo({url:`shopDetails?id=${id}&titleName=${titleName}&status=1`})
+            }
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad() {
+            getExtJson.call(this)
+            this.getCollection()
+//            this.collection.forEach((item) => {
+//                item.color = this.activeColor
+//            })
+            this.$apply()
+        }
+    }
+</script>

@@ -1,0 +1,649 @@
+<style lang="scss">
+    @import '../assets/wxParse/wxParse.wxss';
+    %titleStyle{
+        height: 65rpx;
+        line-height: 65rpx;
+        display: flex;
+        justify-content: space-between;
+        font-size: 24rpx;
+        border-bottom: 1px solid #eee;
+    }
+    .swiper{
+        height: 600rpx;
+    }
+    .buy_together{
+        &_info{
+            padding-bottom: 120rpx;
+        }
+        &_title{
+            padding: 0 20rpx;
+            &_price{
+                font-size: 36rpx;
+                color: #e30212;
+            }
+            &_endTime{
+                font-size: 24rpx;
+                .time{
+                    display: inline-block;
+                }
+            }
+        }
+        &_share{
+            width: 100%;
+            height: 130rpx;
+            display: flex;
+            &_cont{
+                flex-grow: 1;
+                background: #f9f9f9;
+                display: flex;
+                align-items: center;
+                
+                &>view{
+                    padding: 0 12rpx 0 20rpx;
+                }
+                &_name{
+                    font-size: 30rpx;
+                    line-height: 36rpx;
+                    margin-bottom: 12rpx;
+                    overflow: hidden;
+                    -webkit-line-clamp: 1;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                }
+                &_model{
+                    font-size: 24rpx;
+                    line-height: 36rpx;
+                }
+            }
+            &_btn{
+                width: 148rpx;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                text-align: center;
+                background: #e2071d;
+                color: #fdfffc;
+                font-size: 26rpx;
+                .iconfont{
+                    font-size: 34rpx;
+                    margin-bottom: 16rpx;
+                }
+            }
+        }
+        &_detail{
+            &_title{
+                @extend %titleStyle;
+                margin: 0 20rpx;
+                .more_btn{
+                    color: #a7a7a7;
+                }
+            }
+            &_cont{
+                
+            }
+            &_item{
+                display: flex;
+                height: 118rpx;
+                border-bottom: 1px solid #eee;
+                margin: 0 20rpx;
+                .portrait{
+                    width: 90rpx;
+                    display: flex;
+                    flex-shrink: 0;
+                    align-items: center;
+                    view{
+                        width: 90rpx;
+                        height: 90rpx;
+                        border-radius: 50%;
+                        
+                        background: {
+                            size: cover;
+                        }
+                    }
+                    
+                }
+                .name{
+                    flex: 1;
+                    font-size: 30rpx;
+                    display: flex;
+                    align-items: center;
+                    view{
+                        padding-left: 12rpx;
+                    }
+                }
+                .condition{
+                    flex: 1;
+                    font-size: 24rpx;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text{
+                        display: inline-block;
+                        width: 30rpx;
+                        text-align: center;
+                        font-size: 28rpx;
+                        color: #e2071d;
+                    }
+                    .countdown{
+                        display: flex;
+                        font-size: 24rpx;
+                        color: #b9b9b9;
+                    }
+                }
+                
+                .btn{
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    view{
+                        width: 80%;
+                        background: #e2071d;
+                        color: #fff;
+                        border-radius: 6rpx;
+                        font-size: 28rpx;
+                        padding: 16rpx 0;
+                        text-align: center;
+                    }   
+                }
+            }
+            
+        }
+        &_btns{
+            width: 100%;
+            height: 120rpx;
+            position: fixed;
+            left: 0;bottom: 0;
+            display: flex;
+            justify-content: flex-end;
+            background: #f3f4f8;
+            color: #333;
+            font-size: 30rpx;
+            .pay_btn{
+                width: 100%;
+                line-height: 120rpx;
+                background: #e2071d;
+                color: #fff;
+                text-align: center;
+                font-size: 40rpx;
+                overflow: hidden;
+            }
+        }
+        &_goods_detail{
+            padding: 20rpx;
+            &_title{
+                @extend %titleStyle;
+                margin-bottom: 12rpx;
+            }
+            view{
+                max-width: 100%;
+            }
+        }
+    }
+    .select_mask{
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;left: 0;
+        z-index: 102;
+        background-color: rgba(0,0,0,.5)
+    }
+    .select_wrap{
+        width: 100%;
+        position: fixed;
+        left: 0;bottom: 0;
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+        .goods_simple{
+            $width: 160rpx;
+            overflow: hidden;
+            padding: 20rpx 30rpx 14rpx 30rpx;
+            border-bottom: 1px solid #ccc;
+            &_image{
+                
+                float: left;
+                width: $width;
+                height: $width;
+                background: {
+                    size: cover;
+                    position: center;
+                }
+            }
+            &_text{
+                margin-left: $width + 12;
+            }
+            &_name{
+                display: -webkit-box;
+                overflow: hidden;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                font-size: 38rpx; 
+            }
+            &_price{
+                margin-top: 8rpx;
+                font-size: 32rpx;
+                color: #fc3e62;
+                float: left;
+            }
+            &_stock{
+                font-size: 28rpx;
+                float: right;
+            }
+            
+            @at-root{
+                .spec_not{
+                    height: 100rpx;
+                    line-height: 100rpx;
+                    padding: 0 30rpx;
+                    box-sizing: border-box;
+                }
+                .num_selected{
+                    display: inline-block;
+                    margin-left: 36rpx;
+                    vertical-align: middle;
+                }
+                .submit_btn{
+                    width:100%;
+                    height:100rpx;
+                    box-sizing:border-box;
+                    font-size:36rpx;
+                    background-color:#cf2020;
+                    text-align:center;
+                    color:#fff;
+                    line-height:100rpx;
+
+                }
+                .disabled{
+                    color: #999;
+                }
+                .active{
+                    background-color: #fc1a44;
+                    border-color: #fff;
+                    color: #fff;
+                }
+                .spec_props{
+                    &_title{
+                        font-size: 32rpx;
+                        padding: 12rpx 30rpx;
+                    }
+                    &_cont{
+                        display: flex;
+                        padding: 0 60rpx;
+                        box-sizing: border-box;
+                        flex-wrap: wrap;
+                    }
+                    &_item{
+                        font-size: 28rpx;
+                        padding: 10rpx 16rpx;
+                        border: 1px solid #ccc;
+                        border-radius: 10rpx;
+                        margin-right: 10rpx;
+                        margin-bottom: 10rpx;
+                    }
+                }
+            }
+        }
+    }
+    
+</style>
+
+<template>
+
+    <view wx:if="{{true}}">
+        <view class="buy_together_info">
+            <import src="../assets/wxParse/wxParse.wxml"></import>
+            <!-- 商品图 -->
+            <carousel class="swiper" :carouselConfig.sync="carouselConfig"></carousel>
+
+            <view class="buy_together_title">
+                <price class="buy_together_title_price" icon="sub">{{titleConfig.price}}</price>
+                <view class="buy_together_title_endTime">
+                    · 距离结束还有 : 
+                    <countdown 
+                        class="time"
+                        countdown="{{titleConfig.endTime}}" 
+                        num-style="{{numStyle}}"
+                        symbol-style="{{symbolStyle}}"
+                        format="{{format}}"
+                    ></countdown>
+                </view>
+            </view>
+            <!-- 商品名称和规格 -->
+            <view class="buy_together_share">
+                <view class="buy_together_share_cont">
+                    <view>
+                        <view class="buy_together_share_cont_name">{{goodsInfoData.name}}</view>
+                        <view class="buy_together_share_cont_model">限购{{goodsInfoData.condition}}件</view>
+                    </view>
+                </view>
+                <view class="buy_together_share_btn">
+                    <view>
+                        <view class="iconfont icon-fenxiang"></view>
+                        分享
+                    </view>
+                </view>
+            </view>
+
+            <!-- 商品详情 -->
+            <view class="buy_together_goods_detail">
+                <view class="buy_together_goods_detail_title">
+                    <view>商品描述</view>
+                </view>
+                <template is="wxParse" data="{{wxParseData: articleEle.nodes}}"></template>
+            </view>           
+
+            <!-- 选择数量型号面板 -->
+            <view class="{{mask ? 'select_mask' : ''}}" wx:if="{{selectBox}}" @tap="cancelBox">
+                <view class="select_wrap" catchtap='catch'>
+                    <view class="goods_simple">
+                        <view class="goods_simple_image" style="background-image: url('{{goodsInfoData.thumb}}')"></view>
+                        <view class="goods_simple_text">
+                            <view class="goods_simple_name">{{goodsInfoData.name}}</view>
+                            <view class="goods_simple_price">
+                                <price class="buy_together_title_price">{{price}}</price>
+                            </view>
+                            <view class="goods_simple_stock">库存 : {{goodsInfoData.stock}}</view>
+                        </view>
+                    </view>
+
+                    <!-- 有具体规格 -->
+                    <view class="spec_yes">
+                        <repeat for="{{renderSku}}" item="item" index="index">
+                            <view class="spec_props">
+                                <view class="spec_props_title">
+                                    {{item.name}}
+                                </view>
+                                <view class="spec_props_cont">
+                                    <repeat for="{{item.item}}" item="curx" index="inx">
+                                        <view 
+                                            class="spec_props_item {{curx.status ? '' : 'disabled'}} {{curx.selected ? 'active' : ''}}" 
+                                            data-status="{{curx.status}}"
+                                            data-index="{{index}}"
+                                            data-key="{{inx}}"
+                                            data-first="{{item.name}}"
+                                            data-last="{{curx.name}}"
+                                            @tap="selectAdd"
+                                        >
+                                            {{curx.name}}
+                                        </view>
+                                    </repeat>
+                                </view>
+                            </view>
+                        </repeat>
+                    </view>
+
+                    <!-- 无具体规格 -->
+                    <view class="spec_not">
+                        <view class="goods_simple_num">
+                            <text>购买数量 : </text> 
+                            <view class="num_selected">
+                                <counter 
+                                    :max.sync="stock" 
+                                    min="1" 
+                                    :number.sync="count"
+                                    @changenumber.user="changeNumber"
+                                ></counter>
+                            </view> 
+                        </view>
+                    </view>
+
+                    <!-- 确认购买 -->
+                    <view class="submit_btn" @tap="shoppingBtn">{{btnText}}</view>
+
+                </view>
+            </view>
+
+            <!-- 弹框 -->
+            <toast />
+        </view>
+        <!-- 底部购买按钮 -->
+        <view class="buy_together_btns">
+            <view class="pay_btn" @tap="showSelectBox">
+                <xnricon type="xianshimiaosha" color="#fff" fontSize="200"></xnricon>
+            </view>
+        </view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import Carousel from '../components/swiper/Carousel'
+    import getExtJson from '../assets/getExtJson'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+    import Toast from 'wepy-com-toast'
+    import Counter from '../components/counter'
+    import wxParse from '../assets/wxParse/wxParse'
+    import TransformSku from '../assets/transformSku' // 处理商品数据sku的构造函数 传参后台过去的数据 实例中的 contrast 方法可以对比应规格的库存是否还有 传参（firstname"props的名称 例如：款式", lastname"props的具体规格"） （props 从后台获取的数据中查看 或 使用实例中的 $renderSku 属性查看）
+    import xnricon from 'xnr-icon'
+    export default class BuyTogetherInfo extends wepy.page{
+        config = {
+            usingComponents: {
+                'price': '../packages/@minui/wxc-price/dist/index',
+                'countdown': '../packages/@minui/wxc-countdown/dist/index',
+            }
+        }
+        components = {
+            carousel: Carousel,
+            toast: Toast,
+            counter: Counter,
+            xnricon: xnricon
+        }
+        data = {
+            viewBol: false,
+            carouselConfig: {
+                imgUrls: [],
+                dotsColor: '#d9524f',
+                dotsActiveColor: '#fff'
+            },
+            titleConfig: {
+                price: '',
+                condition: '',
+                endTime: ''
+            },
+            numStyle: 'width: 40rpx; font-size: 24rpx; text-align: center;', // 倒计时样式
+            format: 'dd天hh时mm分ss秒', // 倒计时显示的格式
+            symbolStyle: 'width: 20rpx; text-align: center;font-size: 24rpx;', // 倒计时时间与时间的间隔样式
+            buyTogetherViewBol: false,
+            selectBox: false,
+            mask: true,
+            btnText: '立即购买',
+            goodsInfoData: [],
+            price: '',
+            pin: false,
+            currentSpec: {},
+            allSpec: {},
+            mySku: {},
+            activitySku: {},
+            historySku: {},
+            renderSku: [],
+            selectedStatus:{},
+            skuCode: '',
+            astrict: 0,
+            stock: 9,
+            count: 1,
+            selfPrice: '',
+            selfProps: ''
+        }
+        methods = {
+            more(e){
+                this.buyTogetherViewBol = !this.buyTogetherViewBol
+            },
+            showSelectBox(e){
+                this.mySku = this.activitySku
+                this.renderSku = this.activitySku.$renderSku
+                this.selectBox = true
+                this.$apply()
+            },
+            changeNumber(e){
+                this.count = e.number
+            },
+            cancelBox(e){
+                this.selectBox = false
+            },
+            catch(){},
+            selectAdd(e){
+                if(e.currentTarget.dataset.status){
+                    let index = e.currentTarget.dataset.index
+                    let key = e.currentTarget.dataset.key
+                    let first = e.currentTarget.dataset.first
+                    let last = e.currentTarget.dataset.last
+                    // 处理选中高亮 index表示行数索引 （每一个类型算一个行） key 表示每一个的索引
+                    console.log(index)
+                    console.log(key)
+                    console.log(this.renderSku)
+                    this.renderSku[index].item[key].selected = true
+                    // 处理点击不同的按钮时取消原来的高亮
+                    this.selectedStatus['seckill'] = this.selectedStatus['seckill'] || []
+
+                    if(this.selectedStatus['seckill'][index]){
+                        let oldIndex = this.selectedStatus['seckill'][index].index
+                        let oldKey = this.selectedStatus['seckill'][index].key
+                        if(oldKey !== key){
+                            this.renderSku[oldIndex].item[oldKey].selected = false
+                            this.selectedStatus['seckill'][index] = {
+                                index: index,
+                                key: key,
+                                model: last
+                            }
+                        }
+                        
+                    }else {
+                        this.selectedStatus['seckill'][index] = {
+                            index: index,
+                            key: key,
+                            model: last
+                        }
+                    }
+                    
+                    // 更新sku 
+                    this.renderSku = this.mySku.contrast(first, last)
+                    // 获取skucode
+                    let model = this.selectedStatus['seckill'].map( item => item.model)
+                    this.skuCode = this.mySku.getSkuCode(...model)
+
+                    // 获取props
+                    if(this.skuCode){
+                        this.selfProps = model.join(' ')
+                    }
+                    
+                    // 获得库存
+                    this.stock = this.mySku.getStock(...model)
+                    this.count = this.count > this.stock ? this.stock : this.count
+
+                    // 获取价格 
+                    this.selfPrice = this.mySku.getPrice(...model)
+                    if(this.selfPrice){
+                        this.price = retainedDecimalMoney( this.selfPrice * this.count ).substr(1)
+                    }
+
+                    this.$apply()
+                }
+            },
+            shoppingBtn(e){
+                
+                if(this.goodsInfoData.props){
+                    if(!this.skuCode){
+                        this.$invoke('toast', 'show', {
+                            title: '请选择规格',
+                            imgClassName: 'iconfont icon-shibaibiaoqing',
+                            fontSize: 186
+                        })
+                        return
+                    }
+                }
+                let data = {
+                    goods_id: this.goodsInfoData.id,
+                    goods_name: this.goodsInfoData.name,
+                    skucode: this.skuCode,
+                    props: this.selfProps, 
+                    price: this.selfPrice || this.goodsInfoData.price,
+                    quantity: this.count,
+                    stock: this.stock,
+                    thumb: `${this.goodsInfoData.thumb}`,
+                    allPrice: this.price
+                }
+                wepy.setStorageSync('payGoods', [data])
+                wepy.navigateTo({
+                    url: `payment?seckill=true&id=${this.activeId}`
+                })
+                this.selectBox = false
+            }
+        }
+        watch = {
+            count(newVal){
+                if(this.selfPrice){
+                    this.price = retainedDecimalMoney( this.selfPrice * this.count ).substr(1)
+                }
+            }
+        }
+        getGoodsData(){
+            wepy.request({
+                url: `${this.api_host}/restapi/wechat-seckills/${this.id}`,
+                data: {
+                    config_id: this.config_id
+                },
+                success: res => {
+                    
+                    // 拼团的商品详情数据
+                    let activityData = res.data.data.items_activity
+                    let activeData = res.data.data.seckill
+                    let historyData = res.data.data.items_history
+
+                    // 轮播图
+                    if(activityData.imgs){
+                        this.carouselConfig.imgUrls = activityData.imgs.map( item => {
+                            return item.indexOf('http') ? `${this.img_host}${item}` : item
+                        })
+                        this.$apply()
+                    }else if(activityData.thumb){
+                        this.carouselConfig.imgUrls.push( activityData.thumb.indexOf('http') == -1 ? `${this.img_host}${activityData.thumb}` : activityData.thumb)
+                    }
+                    
+                    // 商品信息
+                    this.goodsInfoData = activityData
+                    console.log(activeData)
+                    // 添加限购数量
+                    this.goodsInfoData.condition = activeData.astrict
+                    this.goodsInfoData.thumb = this.goodsInfoData.thumb.indexOf('http') === -1 ? `${this.img_host}${this.goodsInfoData.thumb}` : this.goodsInfoData.thumb
+                    this.price = retainedDecimalMoney(this.goodsInfoData.price).substr(1)
+                    this.astrict = activeData.astrict
+
+                    // sku 获取
+                    if(activityData.props){
+                        this.activitySku = new TransformSku(activityData)
+                    }
+                    
+
+                    // 富文本解析
+                    let info = activityData.detail.replace(/<img( alt="[\s|a-z|A-Z|0-9|\u4e00-\u9fa5]*")? src="\//g, `<img src="${this.img_host}/`)
+                    wxParse.wxParse('articleEle', 'html', info, this)
+                    
+                    // 商品价格、名称和倒计时
+                    this.titleConfig.price = activeData.activity_price
+                    this.titleConfig.condition = activeData.pinkshop_num 
+                    activeData.end_at = activeData.end_at.replace(/-/g, '/')
+                    this.titleConfig.endTime = Date.parse(new Date(activeData.end_at)) - Date.parse(new Date())
+                    this.$apply()
+                    // 元素显示
+                    this.viewBol = true
+                    // 活动id
+                    this.activeId = activeData.id
+                    wepy.hideLoading()
+                }
+            })
+        }
+        onLoad(options){
+            this.id = options.id
+            getExtJson.call(this)
+            wepy.showLoading({
+                title: '加载中...'
+            })
+            this.getGoodsData()
+
+        }
+    }
+
+</script>

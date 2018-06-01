@@ -1,0 +1,87 @@
+<style lang="scss">
+    .Bianlist{
+        padding: 0 20rpx;
+        display: flex;
+        flex-wrap:wrap;
+        .Bianlist_img{
+            width: 30%;
+            flex: 0 0 auto;
+            margin: 18rpx 10rpx 0;
+            image{
+                width: 100%;
+                display: block;
+            }
+        }
+    }
+</style>
+
+<template>
+
+    <view class="Bianlist">
+
+        <view class="Bianlist_img" wx:for="{{Bianlist}}" wx:key="{{index}}" data-id="{{item.id}}" @tap="bran">
+            <image mode="widthFix" src="{{item.urlimg}}"></image>
+        </view>
+
+    </view>
+
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import getExtJson from '../assets/getExtJson'
+
+    export default class Brandlist extends wepy.page {
+        config= {
+            navigationBarTitleText:"品牌列表"
+        }
+
+        components = {
+        }
+
+        data = {
+            Bianlist: [
+            ]
+        }
+
+        methods = {
+            bran(e){
+                let id = e.currentTarget.dataset.id
+                wepy.navigateTo({
+                    url: `BrandDetails?id=${id}`
+                })
+            }
+        }
+        // 品牌列表数据请求
+        getBianlist() {
+            wx.request({
+                url: `${this.api_host}/restapi/goods-brand`,
+                data: {
+                    config_id: this.config_id,
+                },
+                success: (res) => {
+                    this.Bianlist.length = 0
+                    const data = res.data.data.map((item) => {
+                        return {
+                            urlimg: `${this.img_host}${item.logo}`,
+                            id: item.id,
+                            name: item.name,
+                            price: item.price
+                        }
+                    })
+                    this.Bianlist.push.apply(this.Bianlist,data)
+                    this.$apply()
+                }
+            })
+        }
+        onLaunch() {
+        }
+
+        onLoad() {
+            getExtJson.call(this)
+            this.getBianlist()
+        }
+
+    }
+
+</script>

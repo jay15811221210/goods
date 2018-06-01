@@ -1,0 +1,158 @@
+
+<style lang="scss">
+    
+    %borderStyle{
+        box-sizing: border-box;
+        border-radius: 12rpx;
+        padding: 12rpx;
+        border: 1px solid #ccc;
+        margin-bottom: 14rpx;
+    }
+
+    .gbook{
+        &_textarea{
+            padding: 12rpx 30rpx;
+            textarea{
+                width: 100%;
+                @extend %borderStyle;
+            }
+
+            label{
+                font-size: 36rpx;
+                line-height: 60rpx;
+            }
+
+            button{
+                background: rgb(213, 59, 51);
+                color: #fff;
+            }
+
+        }
+
+        &_inp{
+            $height: 80rpx;
+            height: $height;
+            line-height: $height;
+            font-size: 36rpx;
+            display: block;
+            @extend %borderStyle;
+        }
+    }
+
+</style>
+
+<template>
+    
+    <view class="gbook_wrap">
+
+        <view class="gbook_textarea">
+
+            <view>
+                <label>姓名:</label>
+                <input @input="nameChange" value="{{nickname}}" class="gbook_inp" id="name" placeholder="请输入姓名"/>
+            </view>
+            
+            <view>
+                <label>电话:</label>
+                <input @input="telChange" value="{{mobile}}" class="gbook_inp" id="tel" placeholder="请输入电话号码"/>
+            </view>
+
+            <view>
+                <label>留言:</label>
+                <textarea @input="bindTextAreaBlur" value="{{contentText}}" auto-height="{{false}}" maxlength="400" placeholder="请输入留言内容" show-confirm-bar="{{false}}" />
+            </view>
+
+            <button @tap="btnSubmit">提交</button>
+
+        </view>
+        
+    </view>
+
+</template>
+
+<script>
+    import wepy from 'wepy'
+
+    export default class Gbook extends wepy.page{
+        config = {
+          navigationBarTitleText: '留言板'
+        }
+        data = {
+            api_host: '',
+            img_host: '',
+            config_id: '',
+            merchant_id: '',
+            contentText: '',
+            mobile: '',
+            nickname: ''
+        }
+
+        methods = {
+            nameChange(e){
+                this.nickname = e.detail.value
+            },
+            telChange(e){
+                this.mobile = e.detail.value
+            },
+            bindTextAreaBlur(e){
+                this.contentText = e.detail.value
+            },
+            btnSubmit(){
+                if(this.nickname && this.mobile && this.contentText){
+                    wepy.request({
+                        url: `${this.api_host}/restapi/merchant-message-boards`,
+                        method: "POST",
+                        hrader: {
+                            'content-type': 'application/x-www-form-urlencoded'  
+                        },
+                        data: {
+                            content: this.contentText,
+                            merchant_id: this.merchant_id,
+                            mobile: this.mobile,
+                            nickname: this.nickname,
+                            config_id : this.config_id
+                        },
+                        success: (res) => {
+                            if(res.data.success){
+                                wepy.showToast({
+                                    title: '留言已发送',
+                                    icon: 'success',
+                                })
+                                this.contentText = ''
+                                this.mobile = ''
+                                this.nickname = ''
+                                this.$apply()
+                            }else{
+                                wepy.showToast({
+                                    title: res.data.data.message,
+                                    icon: 'none',
+                                })
+                            }
+                        }
+                    })
+                }else {
+                    wepy.showToast({
+                        title: '一定要全部填写',
+                        icon: 'none',
+                    })
+                }
+            }
+        }
+        getExtJson(){
+            if (wepy.getExtConfigSync) {
+                const extConfig = wepy.getExtConfigSync();
+                this.api_host = extConfig.api_host
+                this.img_host = extConfig.img_host
+                this.config_id = extConfig.config_id
+                this.merchant_id = extConfig.merchant_id
+                
+            }
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(){
+            this.getExtJson()
+        }
+    }
+</script>

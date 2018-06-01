@@ -1,0 +1,245 @@
+
+<style lang="scss">
+    .coupon{
+        $c_height: 184rpx;
+        &_wrap{
+            display: flex;
+            justify-content: space-between;
+        }
+        &_info_cont{
+            width: 100%;
+            height: 100%;
+            padding: 100rpx 30rpx 20rpx;
+            box-sizing: border-box;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: #fffafb;
+            box-shadow: 0 0 0 14rpx #fff3f4;
+        }
+        &_info_top{
+            width: 100%;
+            background-color: #fff;
+            position: fixed;
+            left: 0;top: 0;
+            z-index: 9;
+        }
+        &_item{
+            display: flex;
+            width: 100%;
+            height: 240rpx;
+            flex-shrink: 0;
+            border-radius: 12rpx;
+            margin-bottom: 24rpx;
+            background: #fff;
+            justify-content: space-between;
+            border-radius: 10rpx;
+            overflow: hidden;
+            flex-wrap: wrap;
+            .content{
+                flex-shrink: 0;
+                width: 100%;
+                height: 180rpx;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: {
+                    size: cover;
+                    position: center center;
+                }
+            }
+            .content_center{
+                display: flex;
+                width: 100%;
+                height: 113rpx;
+            }
+            .price_wrap{
+                width: 304rpx;
+                height: 100%;
+                border-right: 1px solid #fff;
+                display: flex;
+                align-items: center;
+                padding-left: 40rpx;
+                box-sizing: border-box;
+            }
+            .price{
+                font-size: 60rpx;
+                color: #fff;
+            }
+            .name_wrap{
+                flex: 1;
+                padding-left: 40rpx;
+                line-height: 50rpx;
+                box-sizing: border-box;
+                font-size: 30rpx;
+                display: flex;
+                align-items: center;
+                color: #fff;
+            }
+            .time_wrap{
+                line-height: 60rpx;
+                padding-left: 44rpx;
+                box-sizing: border-box;
+                font-size: 24rpx;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="coupon_info_wrap">
+        <view class="coupon_info_top">
+            <tab-switch :switchConfig.sync="switchConfig" :currentIndex.sync="current" @changeCurrent.user="changeCurrent"></tab-switch>
+        </view>
+        <view class="coupon_info_cont_not" wx:if="{{couponNot}}">
+            <abnor type="COUPON"></abnor>
+        </view>
+        <view class="coupon_info_cont" wx:if="{{!couponNot}}">
+            <repeat for="{{couponData}}">
+                <view class="coupon_item">
+                    
+                    <view class="content" style="background-image: url({{item.imgUrl}})">
+                        <view class="content_center">
+                            <view class="price_wrap">
+                                <price class="price" icon="sub" decimal="1" :value="item.money"></price>
+                            </view>
+                            <view class="name_wrap">
+                                <view>  
+                                    <view>{{item.name}}</view>
+                                    <view>满{{item.terms}}元可用</view>
+                                </view>
+                            </view>
+                        </view>
+                        
+                    </view>
+
+                    <view class="time_wrap">
+                        {{item.expireTime}}
+                    </view>
+
+                </view>
+            </repeat>
+            
+
+        </view>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import TabSwitch from '../components/TabSwitch'
+    import getExtJson from '../assets/getExtJson.js'
+    import Price from '../components/Price'
+    import Abnor from 'xnr-abnor'
+
+    export default class CouponInfo extends wepy.page{
+    
+        components = {
+            'tab-switch': TabSwitch,
+            price: Price,
+            abnor: Abnor
+        }
+        data = {
+            current: 0,
+            couponNot: true,
+            switchConfig: [
+                {
+                    name: '已过期',
+                },
+                {
+                    name: '未使用',
+                },
+                {
+                    name: '已使用',
+                }
+            ],
+            couponData: []
+        }
+
+        getMyCouponData(inx){
+            wepy.request({
+                url: `${this.api_host}/restapi/wechat-my-coupons`,
+                data: {
+                    config_id: this.config_id,
+                    status: inx || this.current,
+                    apps_openid: this.openid,
+                    expand: 'coupon'
+                },
+                success: (res) => {
+                    const data = res.data.data
+                    if(data.length > 0){
+                        this.couponData = data.map( item => {
+                            console.log('sss',inx)
+                            if(inx == 0){
+
+                                return {
+                                    money: item.coupon.face_value,
+                                    terms: item.coupon.order_odds,
+                                    name: item.coupon.coupon_name,
+                                    expireTime: `${item.coupon.start_time.split(' ')[0].replace(/-/g, '/')}-${item.coupon.expire_time.split(' ')[0].replace(/-/g, '/')
+                                    }`,
+                                    imgUrl: 'http://www.xiaoniren.cn/img/weapp_img/abnor/coupon-bg-no.jpg'
+                                }
+                            }else if(inx == 1 || !inx){
+                                return {
+                                    money: item.coupon.face_value,
+                                    terms: item.coupon.order_odds,
+                                    name: item.coupon.coupon_name,
+                                    expireTime: `${item.coupon.start_time.split(' ')[0].replace(/-/g, '/')}-${item.coupon.expire_time.split(' ')[0].replace(/-/g, '/')
+                                    }`,
+                                    imgUrl: 'http://www.xiaoniren.cn/img/weapp_img/abnor/coupon-bg-ok.jpg'
+                                }
+                            }else if(inx == 2){
+                                return {
+                                    money: item.coupon.face_value,
+                                    terms: item.coupon.order_odds,
+                                    name: item.coupon.coupon_name,
+                                    expireTime: `${item.coupon.start_time.split(' ')[0].replace(/-/g, '/')}-${item.coupon.expire_time.split(' ')[0].replace(/-/g, '/')
+                                    }`,
+                                    imgUrl: 'http://www.xiaoniren.cn/img/weapp_img/abnor/coupon-bg-no.jpg'
+                                }
+                            }
+                            
+                        })
+                        this.couponNot = false
+                        this.$apply()
+                    }else{
+                        this.couponData = []
+                        this.couponNot = true
+                        this.$apply()
+                    }
+                    wepy.hideLoading()
+                }
+            })
+        }
+
+        methods = {
+            changeCurrent(inx){
+                if(inx == this.current) return
+                this.couponData = []
+                wepy.showLoading({
+                    title: '加载中...'
+                })
+                this.current = inx
+                this.getMyCouponData(inx)
+                this.$apply()
+            }
+        }
+
+        onLoad(option){
+            let id = option.id
+            this.current = id
+            getExtJson.call(this)
+            wepy.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            this.getMyCouponData()
+            this.$apply()
+        }
+
+    }
+
+</script>
+

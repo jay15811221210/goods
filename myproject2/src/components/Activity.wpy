@@ -1,0 +1,54 @@
+<style lang="scss">
+    .upload{
+        width: 710rpx;
+        margin:20rpx auto 20rpx;
+        .uploadWrap{
+            width:100%;
+            display: flex;
+            display: -webkit-box;
+            flex-direction: column;
+            .upload_Item{
+                width: 344rpx;
+                height: 210rpx;
+                flex: 1;
+                margin: 0 20rpx 0 0;
+                .upload_Item_img{
+                    width: 344rpx;
+                    height: 210rpx;
+                }
+            }
+        }
+    }
+    .scroll-show{
+        width: 100%;
+        height: 20rpx;
+    }
+</style>
+<template>
+    <view>
+        <scroll-view scroll-x="true" scroll-with-animation="true" class="upload" wx:if="{{activity.length > 0 }}">
+            <view class="uploadWrap" scroll-x="true" >
+                <view class="upload_Item" wx:for="{{activity}}" wx:key="id" >
+                    <image class="upload_Item_img" src="{{item.iurl}}" data-id="{{item.page}}"></image>
+                </view>
+            </view>
+        </scroll-view>
+        <view class="scroll-show" wx:else></view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+
+    export default class Activity extends wepy.component{
+        props= {
+            activity: {
+                type: [Array, Object],
+                coerce: val => {
+                    console.log(1,val)
+                    return val
+
+                }
+            }
+        }
+    }
+</script>

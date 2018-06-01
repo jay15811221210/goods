@@ -1,0 +1,511 @@
+
+<style lang="scss">
+    .order_info{
+        &_wrap{
+            padding-bottom: 100rpx;
+        }
+        &_address{
+            display: flex;
+            padding: 24rpx 30rpx;
+            // background: #fffbe6;
+            border-bottom: 12rpx solid #fafafa;
+            &_msg{
+                flex-grow: 1;
+            }
+            &_name{
+                display: flex;
+                view{
+                    font-size: 24rpx;
+                    line-height: 50rpx;
+                    font-size: 32rpx;
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-left: 14rpx;
+                }
+            }
+            &_info{
+                font-size: 26rpx;
+                line-height: 36rpx;
+                padding: 0 16rpx;
+            }
+            &_left_icon,
+            &_right_icon{
+                width: 60rpx;
+                text-align: center;
+                font-size: 36rpx;
+                color: #999;
+                flex-shrink: 0;
+                &:after{
+                    content: '';
+                    display: inline-block;
+                    height: 100%;
+                    vertical-align: middle;
+                }
+                view{
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+            }
+            &_right_icon{
+                width: 40rpx;
+                font-size: 16rpx;
+            }
+        }
+        &_goods{
+            &_title{
+                line-height: 60rpx;
+                font-size: 26rpx;
+                border-bottom: 1px solid #dedede;
+                padding-right: 30rpx;
+                padding-left: 20rpx;
+                color: #666666;
+                .ati{
+                    text-align: right;
+                    float: right;
+                }
+            }
+
+            &_items{
+                display: flex;
+                padding: 12rpx 20rpx 20rpx;
+                background: #fafafa;
+                margin-bottom: 14rpx;
+            }
+            &_msg{
+                margin-left: 24rpx;
+                flex-grow: 1;
+                position: relative;
+            }
+            &_thumb{
+                $imgSize: 160rpx;
+                width: $imgSize;
+                height: $imgSize;
+                background: {
+                    size: cover;
+                }
+            }
+            &_name{
+                display: flex;
+                font-size: 32rpx;
+                line-height: 50rpx;
+                view:first-child{
+                    width: 10em;
+                    flex-grow: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                view:last-child{
+                    flex-shrink: 0;
+                    padding-left: 12rpx;
+                }
+            }
+            &_model{
+                font-size: 28rpx;
+                color: #ccc;
+                padding-top: 10rpx;
+            }
+            &_price{
+                line-height: 50rpx;
+                font-size: 30rpx;
+                position: absolute;
+                left: 0;
+                bottom: 0;
+            }
+        }
+        &_msg{
+            padding: 12rpx 30rpx;
+            border-bottom: 15rpx solid #f5f5f5;
+            margin-bottom: 20rpx;
+            &_items{
+                font-size: 32rpx;
+                line-height: 70rpx;
+                color: #5b5858;
+            }
+        }
+        &_kefu{
+            /*display: flex;*/
+            padding: 0 30rpx;
+            justify-content: space-between;
+            view{
+                width: 30%;
+                height: 60rpx;
+                line-height: 60rpx;
+                position: relative;
+                text-align: center;
+                border: 1px solid #ccc;
+                border-radius: 10rpx;
+                float: right;
+                font-size: 26rpx;
+                color: #000;
+                margin-right: 15rpx;
+            }
+            view:first-child{
+                margin-right: 0rpx;
+            }
+            .contact{
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left: 0;top: 0;
+                opacity: 0;
+                z-index: 9;
+            }
+            .wx-contact-button-wrapper{
+                width: 100%;
+                height: 100%;
+            }
+        }
+        &_bar{
+            display: flex;
+            width: 100%;
+            height: 100rpx;
+            line-height: 100rpx;
+            border-top: 1px solid #ccc;
+            background-color: #fff;
+            position: fixed;
+            left: 0;bottom: 0;
+            &_price{
+                flex-grow: 1;
+                text-align: right;
+                padding-right: 36rpx;
+                color: #fc2626;
+                display: flex;
+                font-size: 32rpx;
+                view{
+                    flex: 1;
+                    text{
+                        font-size: 24rpx;
+                    }
+                }
+            }
+            &_btn{
+                width: 160rpx;
+                flex-shrink: 0;
+                text-align: center;
+                font-size: 36rpx;
+                color: #fff;
+                background-color: #d64723;
+            }
+        }
+        &_bottom{
+            width: 100%;
+            height: 100rpx;
+            line-height: 100rpx;
+            border: 1px solid #efefef;
+            position: fixed;
+            left: 0;bottom: 0;
+            background: #fff; 
+            view{
+                width: 240rpx;
+                text-align: center;
+                color: #fff;
+                background: #fc3e62;
+                float: right;
+            }
+        }
+    }
+    // .border{
+    //     width: 100%;
+    //     height: 40rpx;
+    // }
+    .ref{
+        float: right;
+    }
+    .heji{
+        font-size: 36rpx;
+        color: #000;
+    }
+</style>
+
+<template>
+
+    <view class="order_info_wrap">
+        <!-- 地址 -->
+        <!-- <view class="border" style="background-image: url(../image/border.png)"></view> -->
+        <view class="order_info_address" wx:if="{{address.userName}}">
+
+            <view class="order_info_address_left_icon">
+                <xnricon1 type="dizhi" color="#313131" fontSize="40"></xnricon1>
+            </view>
+            <view class="order_info_address_msg" >
+                <view class="order_info_address_name">
+                    <view>{{address.userName}}</view>
+                    <view>{{address.telNumber}}</view>
+                </view>
+                
+                <view class="order_info_address_info">
+                    {{address.provinceName}}{{address.cityName}}{{address.countyName}}{{address.detailInfo}}
+                </view>
+
+            </view>
+            <view class="order_info_address_right_icon">
+                <xnricon2 type="jiantouyou" color="#313131" fontSize="40"></xnricon2>
+            </view>
+        </view>
+
+        <view class="order_info_goods">
+            <view class="order_info_goods_title">
+                <view>
+                    <text>订单编号: 　{{infoMsg.id}}</text>
+                    <text class="ati">　{{goods.title}}</text>
+                </view>
+            </view>
+
+            <repeat for="{{goods.items}}">
+                <view class="order_info_goods_items">
+                    <view class="order_info_goods_thumb" style="background-image: url({{item.thumb}})"></view>
+                    <view class="order_info_goods_msg">
+                        <view class="order_info_goods_name">
+                            <view>
+                                {{item.goods_name}}
+                            </view>
+                            <view>
+                                x {{item.quantity}}
+                            </view>
+                        </view>
+                        <view class="order_info_goods_model">
+                            {{item.props}}
+                        </view>
+                        <view class="order_info_goods_price">
+                            {{item.price}}
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+            
+        </view>
+
+        <view class="order_info_msg" wx:if="{{infoMsg.id}}">
+            <view class="order_info_msg_items">
+                <text>下单时间: </text> <text class="ref">{{infoMsg.createdTime}}</text>
+            </view>
+            <view class="order_info_msg_items">
+                <text>优惠价格: </text> <text class="ref">{{infoMsg.couponPrice}}</text>
+            </view>
+            <view class="order_info_msg_items">
+                <text>商品运费: </text> <text class="ref">{{infoMsg.expressFee}}</text>
+            </view>
+            <view class="order_info_msg_items heji">
+                <text>商品合计: </text> <text class="ref">{{infoMsg.price}}</text>
+            </view>
+        </view>
+
+        <!-- 客服 -->
+        <view class="order_info_kefu" wx:if="{{infoMsg.id}}">
+            <view @tap="cancelOrder" id="{{infoMsg.id}}" wx:if="{{statusBol}}">
+                取消订单
+            </view>
+            <view wx:if="{{logistics}}" @tap="logisticsActive" id="{{infoMsg.id}}">
+                查看物流
+            </view>
+            <view>
+                联系客服
+                <contact-button class="contact" ></contact-button>
+            </view>
+        </view>
+
+        <!-- 确认收货 -->
+
+        <!-- 底部button -->
+        <view class="order_info_bar" wx:if="{{cancelBarBol}}">
+            <view class="order_info_bar_price">
+
+                <view>
+                    <text>已优惠: </text>{{infoMsg.couponPrice}}
+                </view>
+                <view>
+                    <text>应付: </text>{{realPrice}}
+                </view>
+
+            </view>
+            <view class="order_info_bar_btn" id="{{infoMsg.id}}" @tap="payActive">
+                结算
+            </view>
+        </view>
+        <!-- 确认订单 -->
+        <view class="order_info_bottom" wx:if="{{logistics}}">
+            <view @tap="determine">{{aa}}</view>
+        </view> 
+        <toast />
+    </view>
+
+</template>
+
+<script>
+    
+    import wepy from 'wepy'
+    import getExtJson from '../assets/getExtJson'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+    import patMethod from '../assets/pay'
+    import xnricon from 'xnr-icon'
+    import Toast from 'wepy-com-toast'
+
+    export default class orderInfo extends wepy.page{
+        data = {
+            aa:'确认收货',
+            address: {},
+            goods: {},
+            infoMsg: {},
+            allPrice: '￥0.00',
+            statusBol: false,
+            cancelBarBol: false,
+            logistics: false
+        }
+        components = {
+            toast: Toast,
+            xnricon1: xnricon,
+            xnricon2: xnricon,
+        }
+        computed = {
+            realPrice: () => {
+                if(this.infoMsg.price) {
+                    let price = this.infoMsg.price.substr(1) - this.infoMsg.couponPrice.substr(1)
+                    return retainedDecimalMoney(price)
+                }
+            }
+        }
+        methods = {
+            determine(){
+                wepy.showModal({
+                    title: '提示',
+                    content: '请确认收到商品后再完成订单',
+                    success: (res) => {
+                        if(res.confirm){
+                            wepy.request({
+                                url: `${this.api_host}/restapi/goods-order/finish/${this.infoMsg.id}`,
+                                data: {
+                                    config_id: this.config_id,
+                                    openid: this.openid
+                                },
+                                method: 'PUT',
+                                header: {
+                                    'content-type': 'application/json'
+                                },
+                                success: (res) => {
+                                    if(res.data.success){
+                                        this.$invoke("toast", "show", {
+                                            title: "订单完成",
+                                            imgClassName: "iconfont icon-duigou",
+                                            fontSize: 188
+                                        });
+                                        this.aa = '订单已完成'
+                                        this.$apply();
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            },
+            logisticsActive(e){
+                const id = e.currentTarget.id
+                wepy.navigateTo({
+                    url: `logistics?id=${id}`
+                })
+            },
+            payActive(e){
+                console.log(e.currentTarget.id)
+                const id = e.currentTarget.id
+                patMethod.call(this, {
+                    data: {
+                        id: id,
+                        config_id: this.config_id,
+                        openid: this.openid
+                    }
+                })
+            },
+            cancelOrder(e){
+                
+                const id = e.currentTarget.id
+                wepy.showModal({
+                    title: '提示',
+                    content: '是否取消订单',
+                    success: (res) => {
+                        if(res.confirm){
+                            wepy.showLoading({
+                                title: '加载中...'
+                            })
+                            wepy.request({
+                                url: `${this.api_host}/restapi/goods-orders/${id}`,
+                                data: { 
+                                    config_id: this.config_id,
+                                    openid: this.openid
+                                },
+                                method: 'DELETE',
+                                success: (res) => {
+                                    wepy.hideLoading()
+                                    this.$invoke("toast", "show", {
+                                        title: res.data.data.status,
+                                        imgClassName: "iconfont icon-shibaibiaoqing icon_size"
+                                    })
+                                    setTimeout(() => {
+                                        wepy.navigateBack({
+                                            delta: 1
+                                        })
+                                    }, 100);
+                                    
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        }
+        getOrderInfo(id){
+            wepy.request({
+                url: `${this.api_host}/restapi/goods-orders/${id}`,
+                data: {
+                    config_id: this.config_id,
+                    expand: 'goods'
+                },
+                success: (res) => {
+                    const data = res.data.data
+                    this.address = {
+                        userName: data.real_name,
+                        telNumber: data.mobile,
+                        provinceName: data.province,
+                        cityName: data.city,
+                        countyName: data.county,
+                        detailInfo: data.address
+                    }
+                    let items = data.goods.map( item => {
+                        return {
+                            goods_id: item.goods_id,
+                            goods_name: item.goods_name,
+                            price: retainedDecimalMoney(item.price),
+                            props: item.props,
+                            quantity: item.quantity,
+                            thumb: item.thumb
+                        }
+                    })
+                    this.goods = {
+                        title: data.status,
+                        items: items
+                    }
+                    this.infoMsg = {
+                        id: data.id,
+                        price: retainedDecimalMoney(data.goods_price),
+                        couponPrice: retainedDecimalMoney(data.coupon_price),
+                        createdTime: data.created_at,
+                        expressFee: '￥0.00'
+                    }
+                    this.$apply()
+                }
+            })
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(option){
+            console.log(1,this)
+            getExtJson.call(this)
+            this.statusBol = option.status == '待付款' || option.status == '待发货' ? true : false
+            this.cancelBarBol = option.status == '待付款' ? true : false
+            this.logistics = option.status == '已发货' ? true : false
+            this.getOrderInfo(option.id)
+        }
+    }
+
+</script>
+

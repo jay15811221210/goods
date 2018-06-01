@@ -1,0 +1,517 @@
+<style lang="scss">
+    .shop{
+        .goods_list{
+            padding: 0rpx 30rpx 16rpx;
+            border-bottom: 10rpx solid #ededed;
+        }
+    }
+    .carousel{
+        height: 422rpx;
+    }
+    .icon_size{
+        font-size: 156rpx;
+        text-align: center;
+    }
+
+    // 轮播图遮罩层样式
+    .mask_swiper{
+        height: 80rpx;
+        line-height: 80rpx;
+        font-size: 32rpx;
+        color: #fff;
+        background: rgba(0, 0, 0, .5);
+        text-indent: .5em;
+    }
+
+    .partition_district{
+        display: flex;
+        padding: 0 20rpx;
+        view{
+            height: 100%;
+            image{
+                width: 98%;
+                height: 100%;
+            }
+        }
+    }
+    .asd{
+        flex:1;
+    }
+
+    .partition_districter{
+        padding: 0 20rpx;
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:space-between;
+
+        view{
+            width: 100%;
+            height: calc((100% - 10rpx) / 3);
+            image{
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+    }
+
+    .partition_districtsan{
+        height: 400rpx;
+        padding: 0 20rpx;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        image{
+            width: 100%;
+            height: 100%;
+        }
+        view{
+            width: calc((100% - 10rpx) / 2);
+            height: calc((100% - 10rpx) / 2);
+        }
+        .Pimg0,
+        .Pimg2{
+            margin-bottom: 10rpx;
+        }
+        view:last-child{
+            height: 100%;
+        }
+    }
+
+    .partition_districtsi{
+        height: 400rpx;
+        padding: 0 20rpx;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        image{
+            width: 100%;
+            height: 100%;
+        }
+        view{
+            width: calc((100% - 20rpx) / 3);
+            height: calc((100% - 10rpx) / 2);
+        }
+        .Pimg0,
+        .Pimg2{
+            margin-bottom: 10rpx;
+        }
+        view:last-child{
+            height: 100%;
+        }
+
+    }
+</style>
+<template>
+    <view class="container">
+
+        <!-- 店招 -->
+        <banner
+                :name.sync="bannerName"
+                :isbig.sync="bannerIsBig"
+                :bgImg.sync="bannerBgimg"
+                :height.sync="bannerHeight"
+                :icon.sync="bannerIcon"
+                :color.sync="bannerColor"
+                :display.sync="bannerDisplay"
+        ></banner>
+
+
+
+        <!--视频-->
+        <view class="video" wx:if="{{video.display}}" style="width: 100%;height: {{video.height}}rpx">
+            <video src="{{video.page}}" controls initial-time="1000" page-gesture="true" show-fullscreen-btn="true"
+                   objectFit="fill"
+                style="width: 100%;height: {{video.height}}rpx"
+            ></video>
+        </view>
+
+        <!-- 轮播图 -->
+        <carousel class="carousel" :carouselConfig.sync="carouselConfig" wx:if="{{carouselConfig.display}}"></carousel>
+
+        <!-- 导航 -->
+        <nav wx:if="{{menuDisplay}}" :navConfig.sync="navConfig"></nav>
+
+
+        <!-- 优惠券 -->
+        <coupon wx:if="{{couponDisplay}}" :couponConfig.sync="couponConfig"></coupon>
+
+        <!-- 分类快 -->
+        <!--<view class="partition_district partition_district{{index}}"-->
+              <!--data-clstyle="{{item.colstyle}}"-->
+              <!--wx:for-item="item"-->
+              <!--wx:if="{{item.display && item.colstyle == 1 }}"-->
+              <!--wx:for="{{photos}}"-->
+              <!--wx:key="{{index}}">-->
+
+            <!--<view wx:for="{{item.img}}"-->
+                  <!--class="{{item.class}}{{index}} asd"-->
+                  <!--wx:for-item="w"-->
+                  <!--wx:key="{{index}}"-->
+                  <!--data-page="{{w.page}}"-->
+                  <!--style="width: 100%"-->
+                  <!--@tap="goTo"-->
+            <!--&gt;-->
+                <!--<image mode="widthFix" src="{{w.tpimg}}"></image>-->
+            <!--</view>-->
+        <!--</view>-->
+
+        <repeat for="{{photos}}">
+            <view
+                class="{{ item.colstyle == 1 ? 'partition_district' : item.colstyle == 2 ? 'partition_districter' : item.colstyle == 3 ? 'partition_districtsan' : item.colstyle == 4 ? 'partition_districtsi' : ''}} partition_district{{index}}"
+                data-clstyle="{{item.colstyle}}"
+                wx:for-item="item"
+                wx:if="{{item.display}}"
+                style="height: {{item.height}}rpx;margin-bottom: 10rpx"
+            >
+
+                <view wx:for="{{item.img}}"
+                      class="Pimg{{index}} {{item.colstyle == 1 ? 'asd' : ''}}"
+                      wx:for-item="w"
+                      wx:key="{{index}}"
+                      data-page="{{w.page}}"
+                      @tap="goTo"
+                >
+                    <image mode="" src="{{w.tpimg}}"></image>
+                </view>
+            </view>
+        </repeat>
+
+        <!--<view class="partition_districtsan partition_district{{index}}" style="height: auto"-->
+              <!--data-clstyle="{{item.colstyle}}"-->
+              <!--wx:for-item="item"-->
+              <!--wx:if="{{item.display && item.colstyle == 3 }}"-->
+              <!--wx:for="{{photos}}"-->
+              <!--wx:key="{{index}}">-->
+
+            <!--<view wx:for="{{item.img}}"-->
+                  <!--class="{{item.class}}{{index}}"-->
+                  <!--wx:for-item="w"-->
+                  <!--wx:key="{{index}}"-->
+                  <!--data-page="{{w.page}}"-->
+                  <!--@tap="goTo"-->
+            <!--&gt;-->
+                <!--<image mode="" src="{{w.tpimg}}"></image>-->
+            <!--</view>-->
+        <!--</view>-->
+
+        <!--<view class="partition_districtsi partition_district{{index}}" style="height: auto"-->
+              <!--data-clstyle="{{item.colstyle}}"-->
+              <!--wx:for-item="item"-->
+              <!--wx:if="{{item.display && item.colstyle == 4 }}"-->
+              <!--wx:for="{{photos}}"-->
+              <!--wx:key="{{index}}">-->
+
+            <!--<view wx:for="{{item.img}}"-->
+                  <!--class="{{item.class}}{{index}}"-->
+                  <!--wx:for-item="w"-->
+                  <!--wx:key="{{index}}"-->
+                  <!--data-page="{{w.page}}"-->
+                  <!--@tap="goTo"-->
+            <!--&gt;-->
+                <!--<image mode="" src="{{w.tpimg}}"></image>-->
+            <!--</view>-->
+        <!--</view>-->
+
+
+
+        <!-- 商品块 -->
+        <view class="shop" wx:if="{{flagDisplay}}">
+
+            <repeat for="{{goodsListConfig}}" item="item" index="index" key="key">
+                <goodsList :goodsListConfig.sync="item">
+                    <view slot="title">
+                        {{item.title}}
+                    </view>
+                </goodsList>
+            </repeat>
+
+        </view>
+        <toast></toast>
+
+        <view @tap="webtogo" style="width: 100%;height: 30rpx;text-align: center;font-size: 28rpx;padding-bottom: 20rpx;">
+            小泥人技术支持
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import Carousel from '../components/swiper/Carousel'
+    import Nav from '../components/navigation/Nav'
+    import GoodsList from '../components/GoodsList'
+    import Coupon from '../components/Coupon'
+    import Toast from 'wepy-com-toast'
+    import Banner from '../components/Banner'
+    import getExtJson from '../assets/getExtJson'
+
+    export default class Index extends wepy.page {
+        config = {
+            navigationBarTitleText: '首页'
+        }
+        components = {
+            carousel: Carousel,
+            nav: Nav,
+            goodsList: GoodsList,
+            coupon: Coupon,
+            toast: Toast,
+            banner: Banner
+        }
+        data = {
+            video:{},
+            bannerName: '',
+            bannerIsBig: true,
+            bannerIcon: '',
+            bannerBgimg: '',
+            bannerIcon: '',
+            bannerColor: '',
+            bannerDisplay: true,
+            bannerHeight: '',
+            carouselConfig: {},
+            navConfig: [],
+            photos: [],
+            goodsListConfig: [ // id (暂时没用到) title区域名称 待完善图片 listData 区域列表 每一项为对象
+
+                // listData数据结构 model（辅助数据id1-4 来源ext 暂定） 展现方式 'long' 是否是通栏 long 为通栏 small 为两栏 列表配置项 list为列表 imgURL: 图片地址 title 标题文字 datails 商品简介 market_price市场价格 price 出售价格 id 商品id disabled 购买按钮是否可用（待完善）
+            ],
+            api_host: '',
+            img_host: '',
+            config_id: '',
+            merchant_id: '',
+            menu: null,
+            couponDisplay: '',
+            menuDisplay: '',
+            flagDisplay:'',
+            // id1: [ //接口自定义标识 如抢购为 id1 暂定 每一项为string 'long'代表为通栏 'small' 代表平分 无书写顺序 个数决定页面样式 如 有3个 'long' 两个 small 页面为 上边3个通栏 底下两个平分 small建议一次添加两个 （暂定） 已被extjson中的数据替换
+            //     'long',
+            // ],
+            // id2: [],
+            // id3: [],
+            // id4: [],
+            couponConfig: {
+                title: '优惠券',
+                obtainBtn: true,
+                data: []
+            }
+        }
+
+        computed = {}
+
+        methods = {
+            toast() {
+                let promise = this.$invoke('toast', 'show', {
+                    title: '自定义标题',
+                    img: 'https://raw.githubusercontent.com/kiinlam/wetoast/master/images/star.png'
+                })
+            }
+        }
+
+        events = {
+            getCoupon(index, id) {
+                wepy.showLoading({
+                    title: '加载中...',
+                    mask: true
+                })
+                wepy.request({
+                    url: `${this.api_host}/restapi/wechat-my-coupons`,
+                    method: 'POST',
+                    data: {
+                        config_id: this.config_id,
+                        apps_openid: wx.getStorageSync('openid'),
+                        coupon_id: id
+                    },
+                    success: (res) => {
+                        wepy.hideLoading()
+                        if (res.data.success) {
+                            this.$invoke('toast', 'show', {
+                                title: '领取成功',
+                                imgClassName: 'iconfont icon-chenggong icon_size'
+                            })
+                            this.$apply()
+                        } else {
+                            this.$invoke('toast', 'show', {
+                                title: res.data.data.message,
+                                imgClassName: 'iconfont icon-shibaibiaoqing icon_size'
+                            })
+                        }
+
+                    }
+                })
+            }
+        }
+
+        // 轮播图数据
+        getCarousel() {
+            if (this.swiper.maskStatus) {
+                this.swiper.dotsPosition = 'right'
+                this.swiper.maskClass = 'mask_swiper'
+            }
+            for (let i in this.swiper) {
+
+                this.carouselConfig[i] = this.swiper[i]
+
+            }
+            this.$apply()
+        }
+
+        //获取优惠券信息
+        getCoupon() {
+            if (!this.couponDisplay) return
+            wepy.request({
+                url: `${this.api_host}/restapi/wechat-coupon`,
+                data: {
+                    config_id: this.config_id,
+                    apps_openid: this.openid
+                },
+                success: (res) => {
+                    res.data.data.forEach( item => {
+                        let text = item.is_get > 0 ? '已领取' : '立即领取'
+                        if(true){
+                            this.couponConfig.data.push({
+                                id: item.id,
+                                name: item.coupon_name,
+                                terms: item.order_odds.substr(0, item.order_odds.indexOf('.')),
+                                money: item.face_value.substr(0, item.face_value.indexOf('.')),
+                                obtainBtnText: text,
+                                isGet: item.is_get,
+                                method: 'getCoupon',
+                                expireTime: item.expire_time.split(' ')[0]
+                            })
+                        }
+                    })
+                    this.$apply()
+                }
+            })
+        }
+
+        // 获取菜单数据
+        getMenu(data) {
+            if(wx.getExtConfig) {
+                wx.getExtConfig({
+                    success: (res) => {
+                        const menu = data.map( (item) => {
+                            let url = item.page.split('?')
+                            let obj
+                            if(url[1]){
+                                obj = {}
+                                let key = url[1].split('=')[0]
+                                let val = url[1].split('=')[1]
+                                obj[key] = val
+                            }
+                            return {
+                                imgUrl: item.icon.indexOf('http') != -1 ? item.icon : `${this.img_host}${item.icon}`,
+                                navText: item.name,
+                                navTo: url[0],
+                                query: obj
+                            }
+                        })
+                        menu && (this.navConfig = menu)
+                        this.$apply()
+                    }
+                })
+            }
+        }
+        methods = {
+            goTo(e){
+                let page = e.currentTarget.dataset.page
+                wepy.navigateTo({
+                    url: page,
+                    fail: res => {
+                        wx.switchTab({
+                            url: `${page}`
+                        })
+                    }
+                })
+            },
+
+            webtogo(){
+                console.log(1)
+                wepy.navigateTo({
+                    url: `webView?url=https://www.xiaoniren.cn/support/index`
+                })
+            }
+        }
+        // 获取商品数据
+        getListDataPromise(index){
+            index = index || 0
+            if(!this.flag.display) return
+            new Promise( (resolve, reject) => {
+                wepy.request({
+                    url: `${this.api_host}/restapi/goods`,
+                    data: {
+                        config_id: this.config_id,
+                        page: 1,
+                        per_page: this.flag.data[index].num,
+                        flag: this.flag.data[index].flag,
+                        status: 1
+                    },
+                    success: (res) => {
+                        const data = res.data.data.items.map( (item, inx) => {
+                            return {
+                                imgUrl: item.thumb.indexOf('http') > -1 ? item.thumb : `${this.img_host}${item.thumb}`,
+                                title: item.name,
+                                details: '',
+                                model: this.flag.data[index].style[inx] || 'small',
+                                market_price: item.market_price,
+                                price: item.price,
+                                id: item.id,
+                                stock: item.stock,
+                                sales: item.sales,
+                                style: this.flag.data[index].style
+                            }
+                        })
+                        let obj = {
+                                id: this.flag.data[index].flag,
+                                title: this.flag.data[index].tag,
+                                style: this.flag.data[index].style,
+                                listData: data
+                        }
+                        this.goodsListConfig.push(obj)
+                        resolve(++index)
+                        this.$apply()
+                    }
+                })
+            }).then( index => {
+                if(index < this.flag.length){
+                    this.getListDataPromise(index)
+                }
+            })
+        }
+
+        // 获取banner 店招
+        getBannerData() {
+            if (!this.banner.display) {
+                this.bannerDisplay = this.banner.display
+                return
+            }
+            this.bannerName = this.banner.name
+            this.bannerIcon = this.banner.logo
+            this.bannerColor = this.banner.color
+            this.bannerHeight = this.banner.height
+            this.bannerDisplay = this.banner.display
+            this.bannerBgimg = this.banner.background
+            this.bannerIsBig = this.banner.isbig
+            this.$apply()
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad() {
+            getExtJson.call(this)
+            this.getBannerData()
+            this.getCarousel()
+            this.getMenu(this.menu)
+            this.getListDataPromise()
+            this.getCoupon()
+//            this.photos.img.forEach((item) => {
+//                item.tpimg = item.tpimg.indexOf('http') > -1 ? item.tpimg : `${this.img_host}${item.tpimg}`
+//
+//            })
+            this.video.page = this.video.page.indexOf('http') > -1 ? this.video.page : `${this.img_host}${this.video.page}`
+            this.$apply()
+
+        }
+    }
+</script>

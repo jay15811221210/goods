@@ -1,0 +1,140 @@
+<style lang="scss">
+    .scroll_tab{
+        &_wrap{
+            border-bottom: 1px solid #eee;
+        }
+        &_cont{
+            display: flex;
+            height: 86rpx;
+            line-height: 85rpx;
+            position: relative;
+        }
+        &_items{
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 32rpx;
+        }
+        &_pointer{
+            height: 1px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+    }
+</style>
+
+<template>
+    
+    <view class="scroll_tab_wrap">
+        <scroll-view 
+            scroll-x="true" 
+            class="scroll_tab" 
+            scroll-with-animation="{{animate}}"
+            scroll-left="{{scrollLeft}}"
+        >
+            <view class="scroll_tab_cont">
+                <repeat for="{{labelData}}">
+
+                    <view 
+                        class="scroll_tab_items" 
+                        style="width: {{width}}rpx; color: {{index == selectedId ? selectedColor : ''}}; transition: {{transition / 1000}}s" 
+                        @tap="click" 
+                        data-index="{{index}}"
+                    >
+                        {{item.title}}
+                    </view>
+
+                </repeat>
+                <view 
+                    class="scroll_tab_pointer" 
+                    style="width: {{width}}rpx; background-color: {{selectedColor}}; left: {{pointerLeft}}rpx; transition: {{transition / 1000}}s"
+                ></view>
+            </view>
+            
+            
+        </scroll-view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    /* 
+    * labelData Array 导航的内容 默认空
+    * animate Boolean 是否动画 默认true
+    * selectedColor Boolean 选中的颜色 默认 #fc3e62
+    * transition Number 动画的时间（毫秒）默认300
+    * defaultIndex Number 默认选中的
+     */
+
+    export default class ScrollTab extends wepy.component {
+        props = {
+            labelData: {
+                type: Array,
+                coerce: res => res,
+                default: []
+            },
+            animate: {
+                type: Boolean,
+                coerce: res => res,
+                default: true
+            },
+            selectedColor: {
+                type: String,
+                coerce: res => res,
+                default: '#fc3e62'
+            },
+            transition: {
+                type: Number,
+                coerce: res => res,
+                default: 300
+            },
+            defaultIndex:{
+                type: Number,
+                coerce: res => res,
+                default: 0
+            }
+        }
+        data = {
+            width: 0,
+            scrollLeft: 0,
+            selectedId: 0,
+            pointerLeft: 0
+        }
+        watch = {
+            labelData(newVal){
+                this.labelComponted(newVal)
+            }
+        }
+        labelComponted(newVal){
+            this.width = parseInt(750 / (newVal.length > 5 ? 5 : newVal.length))
+            setTimeout(() => {
+                this.move(this.defaultIndex)
+            }, 300);
+            this.$apply()
+        }
+        move(index){
+            this.selectedId = index
+            this.pointerLeft = index * this.width
+            this.scrollLeft = (this.pointerLeft-this.width*2.2) / 2
+            this.$emit('tabchange', {
+                index: index,
+            })
+            this.$apply()
+        }
+        methods = {
+            click(e){
+                let index = e.currentTarget.dataset.index
+                this.move(index)
+            }
+        }
+        onLoad(){
+            this.labelComponted(this.labelData)
+        }
+    }
+    
+</script>
+
+

@@ -1,0 +1,65 @@
+{
+  "extEnable": true,
+  "extAppid": "wx38f46ade076245fd",
+  "directCommit": false,
+  "ext": {
+    "config_id": 634,
+    "merchant_id": 130,
+    "api_host": "http://www.xiaoniren.cn",
+    "img_host": "http://www.xiaoniren.cn",
+    "style": "#fc3e62",
+    "menu": [
+      {
+        "name": "全部商品",
+        "icon": "/upload/wechatpage/icon/201801/15166940712843.png",
+        "page": "productlist"
+      },
+      {
+        "name": "品牌优选",
+        "icon": "/upload/wechatpage/icon/201801/15166940532650.png",
+        "page": "Brandlist"
+      },
+      {
+        "name": "我的订单",
+        "icon": "/img/weapp_img/menu_icon/icon_gbook.png",
+        "page": "memberInfo"
+      },
+      {
+        "name": "个人中心",
+        "icon": "/img/weapp_img/menu_icon/icon_map.png",
+        "page": "member"
+      }
+    ],
+    "flag": [
+      {
+        "tag": "\u6807\u98981",
+        "flag": 2,
+        "num": 4,
+        "style": []
+      }
+    ],
+    "swiper": {
+      "autoplay": true,
+      "interval": 2000,
+      "duration": 500,
+      "loop": true,
+      "dots": true,
+      "dotsColor": "#d9524f",
+      "dotsActiveColor": "#fff"
+    },
+    "router": {
+      "category": "categorySearch",
+      "categoryDetail": "categoryInfoTopScroll",
+      "goodsInfo": "",
+      "home": "index"
+    }
+  },
+  "extPages": {},
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fc3e62",
+    "navigationBarTitleText": "\u5c0f\u6ce5\u4eba\u6ed1\u96ea",
+    "navigationBarTextStyle": "#fff"
+  },
+  "networkTimeout": {}
+}

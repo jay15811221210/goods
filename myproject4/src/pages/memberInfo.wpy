@@ -1,0 +1,441 @@
+
+<style lang="scss">
+    page{
+        background: #efefef;
+    }
+    .member_info_tab_view{
+        padding-top: 90rpx;
+        &_not{
+            line-height: 240rpx;
+            text-align: center;
+            font-size: 36rpx;
+        }
+        &_item{
+            padding: 0 20rpx;
+            margin: 0 20rpx;
+            background: #fff;
+            border-top: 15rpx solid #efefef;
+        }
+        &_top,
+        &_price{
+            display: flex;
+            font-size: 28rpx;
+            justify-content: space-between;
+        }
+        &_top{
+            line-height: 80rpx;
+            .bianhao{
+                color: #333333;
+                font-size: 24rxp;
+                line-height: 70rpx;
+            }
+            .jieguo{
+                color: #333333;
+                font-size: 24rxp;
+            }
+        }
+        &_cont{
+            display: flex;
+            flex-wrap: wrap;
+            &_img_wrap{
+                width: 27.33%;
+                flex-shrink: 0;
+                margin-bottom: 12rpx;
+                view{
+                    width: 150rpx;
+                    height: 150rpx;
+                    background: {
+                        size: cover;
+                        position: center;
+                    }
+                }
+                
+            }
+            &_img_wrapa{
+                width: 70%;
+                color: #666666;
+                font-size: 24rpx;
+                view{
+                    padding-top: 22rpx;
+                    color: #999999;
+                    font-size: 22rpx;
+                }
+                .price{
+                    font-size: 28rpx;
+                    color: #f95353;
+                    text-align: right;
+                    padding-top: 22rpx;
+                    text{
+                        color: #999999;
+
+                    }
+
+                }
+            }
+        }
+        &_price{
+            padding: 20rpx 0;
+            .zongjia{
+                line-height: 56rpx;
+                font-size: 36rpx;
+            }
+            .btns{
+
+                .btnsid{
+                    width: 130rpx;
+                    height: 56rpx;
+                    line-height: 56rpx;
+                    text-align: center;
+                    background: #f95353;
+                    color: #fff;
+                    font-size: 30rpx;
+                    border-radius: 12rpx;
+                    float: left;
+                }
+                .btnsqu{
+                    width: 130rpx;
+                    height: 56rxp;
+                    line-height: 56rpx;
+                    font-size: 30rpx;
+                    text-align: center;
+                    color: #999999;
+                    float: left;
+                    margin-left: 20rpx;
+                }
+            }
+        }
+
+    }
+    .member_info_top{
+        width: 100%;
+        height: 90rpx;
+        background-color: #fff;
+        position: fixed;
+        left: 0;top: 0;
+        background: #f8f8f8;
+        z-index: 999;
+    }
+</style>
+
+<template>
+    <view class="member_info_wrap">
+        <view class="member_info_top">
+            <tab-switch :switchConfig.sync="switchConfig" :currentIndex.sync="current" @changeCurrent.user="changeCurrent"></tab-switch>
+        </view>
+
+        <view class="member_info_tab_view_not" wx:if="{{tabViewStatus}}">
+            <abnor type="DATA"></abnor>
+        </view>
+
+        <scroll-view class="member_info_tab_view"
+              scroll-y="{{true}}"
+              style="height: {{scrollViewHeight}}px;"
+              scroll-top="{{scrollTop}}"
+              @scrolltolower="scrollTolowerHander"
+              wx:if="{{!tabViewStatus}}">
+            <repeat for="{{tabView}}">
+
+                <view class="member_info_tab_view_item" @tap="goTo" data-status="{{item.status}}" id="{{item.id}}">
+                    <view class="member_info_tab_view_top">
+                        <view class="bianhao">
+                            订单编号:　{{item.id}}
+                        </view>
+                        <view class="jieguo">
+                            {{item.status}}
+                        </view>
+                    </view>
+
+                    <view class="member_info_tab_view_cont">
+                        <repeat for="{{item.goods}}" item="goods">
+                            <view class="member_info_tab_view_cont_img_wrap">
+                                <view style="background-image: url({{goods.thumb}})"></view>
+                            </view>
+                            <view class="member_info_tab_view_cont_img_wrapa">{{goods.goods_name}}
+
+                                <view>{{goods.props}}</view>
+
+                                <view class="price">
+                                    <text>共{{goods.quantity}}件商品</text>　￥{{goods.price}}
+                                </view>
+
+                            </view>
+                        </repeat>
+                    </view>
+
+                    <view class="member_info_tab_view_price">
+                        <view class="zongjia">￥{{item.goods_price}}</view>
+                        <view class="btns"  catchtap="catch">
+                            <view class="btnsid" id="{{item.btnId}}" wx:if="{{item.btnText}}" data-index="{{index}}" @tap="btnActive">
+                                {{item.btnText}}
+                            </view>
+                            <view class="btnsqu" wx:if="{{item.cancelBtn}}" data-index="{{index}}" id="{{item.id}}" @tap="cancelOrder">取消订单</view>
+                        </view>
+                    </view>
+                </view>
+
+            </repeat>
+        </scroll-view>
+        <toast />
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import TabSwitch from '../components/TabSwitch'
+    import getExtJson from '../assets/getExtJson'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+    import Toast from 'wepy-com-toast'
+    import payMethod from '../assets/pay'
+    import Abnor from 'xnr-abnor'
+    export default class MemberInfo extends wepy.page{
+        config = {
+            navigationBarTitleText: '我的订单'
+        }
+        components = {
+            'tab-switch': TabSwitch,
+            toast: Toast,
+            abnor: Abnor
+        }
+        methods = {
+
+            catch(){},
+            changeCurrent(index){
+                wepy.showLoading({
+                    title: '加载中...',
+                    mask: true
+                })
+                this.scrollTop = 0
+                setTimeout(() => {
+                    this.scrollTop = ''
+                }, 100)
+                if(index != 4){
+                    this.getTabViewData(index)
+                }else{
+                    this.getTabViewData()
+                }
+                this.current=index
+                this.tabView = this.tabViewConfig[index]
+                wepy.setNavigationBarTitle({
+                    title: this.status[index]
+                })
+                this.currentPage = 1
+                this.$apply();
+            },
+            btnActive(e){
+                const id = e.currentTarget.id
+                const index = e.currentTarget.dataset.index
+                if(id == 0){
+                    payMethod.call(this, {
+                        data: {
+                            id: this.tabView[index].id,
+                            config_id: this.config_id,
+                            openid: this.openid
+                        }
+                    })
+                }
+            },
+            goTo(e){
+                console.log(e.currentTarget.dataset)
+                wepy.navigateTo({
+                    url: `orderInfo?id=${e.currentTarget.id}&status=${e.currentTarget.dataset.status}`
+                })
+            },
+            cancelOrder(e){
+                wepy.showModal({
+                    title: '提示',
+                    content: '是否取消订单',
+                    success: (res) => {
+                        if(res.confirm){
+                            wepy.showLoading({
+                                title: '加载中...'
+                            })
+                            const id = e.currentTarget.id
+                            const index = e.currentTarget.dataset.index
+                            wepy.request({
+                                url: `${this.api_host}/restapi/goods-orders/${id}`,
+                                data: {
+                                    config_id: this.config_id,
+                                    openid: this.openid
+                                },
+                                method: 'DELETE',
+                                success: (res) => {
+                                    wepy.hideLoading()
+                                    this.$invoke("toast", "show", {
+                                        title: res.data.data.status,
+                                        imgClassName: "iconfont icon-shibaibiaoqing icon_size"
+                                    })
+                                    this.tabView.splice(index, 1)
+                                    this.$apply()
+                                }
+                            })
+                        }
+                    }
+                })
+                
+            },
+            /*
+* 用户下拉触底事件a
+* */
+            scrollTolowerHander() {
+                if(this.currentPage < this.pageCount) {
+                    this.currentPage ++
+                    wepy.request({
+                        url: `${this.api_host}/restapi/goods-orders`,
+                        data: {
+                            config_id: this.config_id,
+                            'per-page': this.pageSize,
+                            page: this.currentPage,
+                            expand: 'goods',
+                            filter:[
+                                {
+                                    status: this.current != 4 ? this.status[this.current] : ''
+                                },
+                                {
+                                    openid: this.openid
+                                }
+                            ]
+                        },
+                        success: (res) => {
+                            console.log(1,res)
+                            res.data.data.items.forEach((item) => {
+                                this.tabView.push(item)
+                            })
+                            this.$apply()
+                        }
+                    })
+                }
+            }
+        }
+        data = {
+            scrollTop: '',
+            scrollViewHeight: '0',
+            pageCount: '',  //总页数
+            currentPage: 1,   //当前页数
+            current: 0,
+            switchConfig: [
+                {
+                    name: '待付款',
+                },
+                {
+                    name: '待发货',
+                },
+                {
+                    name: '待收货',
+                },
+                {
+                    name: '已完成',
+                },
+                {
+                    name: '全部订单',
+                },
+            ],
+            tabViewConfig: [],
+            pageSize: 20,
+            tabView: [],
+            tabViewStatus: true,
+            status: [
+                '待付款',
+                '待发货',
+                '已发货',
+                '已完成',
+                '全部订单',
+            ]
+        }
+        getTabViewData(index){
+            let data = {}
+            if(index){
+                const status = this.status[index]
+                data = {
+                    config_id: this.config_id,
+                    'per-page': this.pageSize,
+                    page: 1,
+                    filter:[
+                        {
+                            status: status
+                        },
+                        {
+                            openid: this.openid
+                        }
+                    ],
+                    expand: 'goods'
+                }
+            }else{
+                data = {
+                    config_id: this.config_id,
+                    'per-page': this.pageSize,
+                    page: 1,
+                    filter:[
+                        {
+                            openid: this.openid
+                        }
+                    ],
+                    expand: 'goods'
+                }
+            }
+
+            wepy.request({
+                url: `${this.api_host}/restapi/goods-orders`,
+                data: data,
+                success: (res) => {
+                    this.pageCount = res.data.data._meta.pageCount
+                    let inx = index || 4
+                    let data = res.data.data.items
+                    this.tabViewConfig[inx] = this.addBtnText(data)
+                    this.tabView = this.addBtnText(data)
+                    this.tabViewStatus = this.tabView.length > 0 ? false : true
+                    this.$apply()
+                    wepy.hideLoading()
+                }
+            })
+        }
+        addBtnText(data){
+            data.forEach( item => {
+                if(item.status == '待付款'){
+                    item.btnText = '付款'
+                    item.btnId = 0,
+                    item.cancelBtn = true
+                }else if(item.status == '待发货'){
+                    item.btnText = ''
+                    item.btnId = 1
+                    item.cancelBtn = false
+                }else if(item.status == '已发货'){
+                    item.btnText = ''
+                    item.btnId = 2
+                    item.cancelBtn = false
+                }else if(item.status == '已完成'){
+                    item.btnText = ''
+                    item.btnId = 3
+                    item.cancelBtn = false
+                }
+            })
+            return data
+        }
+        onShow(){
+            if(this.current != 4){
+                this.getTabViewData(this.current)
+            }else{
+                this.getTabViewData()
+            }
+        }
+        onLoad(option){
+            this.current = option.index
+            this.tabView = this.tabViewConfig[option.index]
+            getExtJson.call(this)
+            wx.createSelectorQuery().selectViewport('page').boundingClientRect((rect) => {
+                this.scrollViewHeight = rect.height
+                this.$apply()
+            }).exec()
+            wepy.setNavigationBarTitle({
+                title: this.status[option.index]
+            })
+            wepy.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+        }
+    }
+
+</script>
+
+

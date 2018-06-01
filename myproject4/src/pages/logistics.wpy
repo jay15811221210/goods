@@ -1,0 +1,232 @@
+
+<style lang="scss">
+
+    .logistics{
+        &_wrap{
+            padding-bottom: 100rpx;
+        }
+        &_traces{
+            padding-top: 20rpx;
+            &_items{
+                $size: 260rpx;
+                display: flex;
+                color: #999;
+                border-bottom: 1px solid #f1f1f1;
+                padding-bottom:10rpx;
+                &_date{
+                    
+                    width: 100%;
+                    &_table{
+                        width: 100%;
+                        padding: 0 20rpx;
+                        // vertical-align: middle;
+                        view:last-child{
+                            padding-top: 10rpx;
+                            font-size: 24rpx;
+                        }
+                        view:first-child{
+                            padding: 0 30rpx 0 0;
+                            font-size: 26rpx;
+                        }
+                    }
+                }
+                &_cont{
+                    flex-grow: 1;
+                    font-size: 32rpx;
+                    padding: 0 30rpx;
+                    border-left: 1px solid #efefef;
+                    position: relative;
+                    .icon_status{
+                        font-size: 24rpx;
+                        margin-left: -12rpx;
+                        position: absolute;
+                        left: 0;top: 0;
+                    }
+                }
+                &:last-child{
+                    .logistics_traces_items_cont{
+                        border-left: 1px solid #fff;
+                    }
+                }
+                &:first-child{
+                    color: #fa7b06;
+                    .icon_status{
+                        font-size: 32rpx;
+                        margin-left: -16rpx;
+                    }
+                }
+            }
+        }
+        &_goods_wrap{
+            padding: 20rpx 30rpx;
+            font-size: 30rpx;
+            line-height: 50rpx;
+            border-bottom: 10rpx solid #d9d9d9;
+            color: #000;
+        }
+        &_bottom{
+            width: 100%;
+            height: 100rpx;
+            line-height: 100rpx;
+            border: 1px solid #efefef;
+            position: fixed;
+            left: 0;bottom: 0;
+            background: #fff; 
+            view{
+                width: 240rpx;
+                text-align: center;
+                color: #fff;
+                background: #fc3e62;
+                float: right;
+            }
+        }
+    }
+
+</style>
+
+<template>
+    <view class="logistics_wrap">
+        
+        <view class="logistics_goods_wrap">
+            <view>订单编号: {{goodsMsg.delivery_sn}}</view>
+            <view>快递公司: {{goodsMsg.delivery_org}}</view>
+            <view>发出时间: {{goodsMsg.updated_at}}</view>
+        </view>
+
+        <view class="logistics_traces">
+            <repeat for="{{traces}}">
+                <view class="logistics_traces_items">
+                    <view class="logistics_traces_items_date">
+                        <view class="logistics_traces_items_date_table"> 
+                            <view>
+                                <xnricon type="checked" color="" fontSize="30"></xnricon>
+                                {{item.expressStatus}}
+                            </view>
+                            <view>{{item.date}}-{{item.time}}</view>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+        </view>
+
+        <view class="logistics_bottom">
+            <view @tap="determine">{{goodsMsg.text}}</view>
+        </view> 
+        <toast />
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import getExtJson from '../assets/getExtJson'
+    import Toast from 'wepy-com-toast'
+    import xnricon from 'xnr-icon'
+
+    export default class logistics extends wepy.page{
+        config = {
+            navigationBarTitleText: '查看物流'
+        }
+        components = {
+            toast: Toast,
+            xnricon:xnricon
+        }
+        data = {
+            traces: [],
+            goodsMsg: {}
+        }
+        methods = {
+            determine(){
+                wepy.showModal({
+                    title: '提示',
+                    content: '请确认收到商品后再完成订单',
+                    success: (res) => {
+                        if(res.confirm){
+                            wepy.request({
+                                url: `${this.api_host}/restapi/goods-order/finish/${this.goodsMsg.id}`,
+                                data: {
+                                    config_id: this.config_id,
+                                    openid: this.openid
+                                },
+                                method: 'PUT',
+                                header: {
+                                    'content-type': 'application/json'
+                                },
+                                success: (res) => {
+                                    if(res.data.success){
+                                        this.$invoke("toast", "show", {
+                                            title: "订单完成",
+                                            imgClassName: "iconfont icon-duigou",
+                                            fontSize: 188
+                                        }); 
+                                        this.goodsMsg.text = '订单已完成'
+                                        this.$apply();
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+        }
+        getLogistics(id){
+            wepy.request({
+                url: `${this.api_host}/appapi/kdniao/api`,
+                method: 'POST',
+                data: {
+                    order_id: id
+                },
+                success: (res) => {
+                    console.log(res)
+                    // let traces = res.data.data.Traces.unshift({
+                    //     AcceptTime: res.data.data.updated_at,
+                    //     AcceptStation: '商家已发货'
+                    // }).reverse()
+                    res.data.data.Traces.unshift({
+                        AcceptTime: res.data.data.updated_at,
+                        AcceptStation: '商家已发货'
+                    })
+                    let traces = res.data.data.Traces.reverse()
+                    
+                    traces.forEach( item => {
+                        this.traces.push({
+                            date: item.AcceptTime.split(' ')[0].substr(5),
+                            time: item.AcceptTime.split(' ')[1].substr(0,5),
+                            expressStatus: item.AcceptStation
+                        })
+                    });
+                    this.$apply()
+                }
+            })
+        }
+        getGoodsInfo(id){
+            wepy.request({
+                url: `${this.api_host}/restapi/goods-orders/${id}`,
+                data: {
+                    config_id: this.config_id,
+                    expand: 'goods'
+                },
+                success: (res) => {
+                    console.log(res)
+                    this.goodsMsg = {
+                        delivery_org: res.data.data.delivery_org,
+                        delivery_sn: res.data.data.delivery_sn,
+                        updated_at: res.data.data.updated_at,
+                        id: res.data.data.id,
+                        text: res.data.data.status != '已完成' ? '确认收货' : '订单已完成'
+                    }
+                    this.$apply()
+                }
+            })
+        }
+        onLoad(option){
+            getExtJson.call(this)
+            this.getLogistics(option.id)
+            this.getGoodsInfo(option.id)
+        }
+    }
+
+</script>
+
+
+

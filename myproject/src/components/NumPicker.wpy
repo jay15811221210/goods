@@ -1,0 +1,172 @@
+
+<style lang="scss">
+    .num_picker{
+        &_wrap{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;top: 0;
+            z-index: 99;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        &_box{
+            $width: 500rpx;
+            $height: 242rpx;
+            width: $width;
+            position: absolute;
+            left: 50%;top: 50%;
+            margin-left: -$width / 2;
+            margin-top: -$height / 2;
+            background-color: #fff;
+            border-radius: 20rpx;
+            overflow: hidden;
+        }
+        &_title{
+            text-align: center;
+            font-size: 32rpx;
+            /*line-height: 56rpx;*/
+            margin: 0 50rpx;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            border-bottom: 1px solid #ccc;
+        }
+        &_select{
+            display: flex;
+            padding: 30rpx 60rpx;
+            view{
+                text-align: center;
+            }
+            text{
+                font-size: 48rpx;
+            }
+        }
+        &_num_btns{
+            width: 80rpx;
+            flex-shrink: 0;
+        }
+        &_input{
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-left: 0;
+            font-size: 24rpx;
+            border-top: 0;
+            border-bottom: 0;
+            padding-top: 6rpx;
+        }
+        &_btns{
+            display: flex;
+            border-top: 1px solid #ccc; 
+            view{
+                flex: 1;
+                text-align: center;
+                line-height: 66rpx;
+                font-size: 32rpx;
+                box-sizing: border-box;
+                color: #58ec58;
+                &:first-child{
+                    border-right: 1px solid #ccc;
+                    color: #777;
+                }
+            }
+        }
+
+    }
+</style>
+
+<template>
+
+    <view class="num_picker_wrap" wx:if="{{numPickerStatus}}" @tap="cancel">
+        <view class="num_picker_box" catchtap='catch'>
+            <view class="num_picker_title">
+                {{title}}
+            </view>
+            <view class="num_picker_select">
+                <view class="num_picker_num_btns" @tap="reduce">
+                    <text class="iconfont icon-jian"></text>
+                </view>
+
+                <view class="num_picker_input">
+                    <input type="number" value="{{currentNum}}" disabled="{{disabled}}" @input="numChange" />
+                </view>
+
+                <view class="num_picker_num_btns" @tap="plus">
+                    <text class="iconfont icon-jia"></text>
+                </view>
+            </view>
+            <view class="num_picker_btns">
+                <view @tap="cancel">
+                    取消
+                </view>
+                <view @tap="confirm">
+                    确定
+                </view>
+            </view>
+        </view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class NumPicker extends wepy.component {
+        data = {
+            numPickerStatus: false,
+            title: '请选择数量', //标题文字
+            currentNum: 0, //选择器数量
+            maxNum: 99, //最大数
+            minNum: 1, //最小数
+            disabled: true //输入框是否不可用
+        }
+        methods = {
+            catch(){
+
+            },
+            reduce(){
+                this.currentNum--
+                this.currentNum = this.currentNum < this.minNum ? this.minNum : this.currentNum
+                this.$apply()
+            },
+            plus(){
+                this.currentNum++
+                this.currentNum = this.currentNum > this.maxNum ? this.maxNum : this.currentNum
+                this.$apply()
+            },
+            numChange(e){
+                const currentNum = e.detail.value
+                this.currentNum = 0
+                if(!currentNum){
+                    this.currentNum = this.minNum
+                    console.log(this.currentNum)
+                }
+                this.$apply()
+            },
+            cancel(){
+                this.$emit('changeCurrent', {
+                    cancel: true,
+                    currentNum: this.currentNum
+                })
+                this.numPickerStatus = false
+            },
+            confirm(){
+                this.$emit('changeCurrent', {
+                    confirm: true,
+                    currentNum: this.currentNum
+                })
+                this.numPickerStatus = false
+            }
+        }
+        events = {}
+        show(data = {}){ //调用此方法可以显示弹框
+            this.numPickerStatus = true
+            for(let i in data){
+                this[i] = data[i]
+            }
+            this.$apply()
+        }
+    }
+</script>
+
+

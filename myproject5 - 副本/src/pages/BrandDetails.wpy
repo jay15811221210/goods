@@ -1,0 +1,191 @@
+<style lang="scss">
+    .ban_logo{
+        text-align: center;
+        pading-top: 25rpx;
+        width: 100%;
+        border-top: 18rpx solid #eeeeee;
+        image{
+            width: 220rpx;
+            margin-top: 25rpx;
+        }
+    }
+    .banher{
+        text-align: center;
+        width: 100%;
+        color: #262626;
+        font-size: 30rpx;
+        line-height: 83rpx;
+    }
+    .banher1{
+        text-align: center;
+        width: 100%;
+        color: #262626;
+        font-size: 30rpx;
+        line-height: 83rpx;
+        border-top: 20rpx solid #eeeeee;
+    }
+    .bannews{
+        padding: 0 20rpx 20rpx;
+        color: #666666;
+        font-size: 24rpx;
+        line-height: 40rpx;
+    }
+    .Bianlist{
+        padding: 0 20rpx;
+        display: flex;
+        flex-wrap:wrap;
+        .Bianlist_img{
+            width: 47%;
+            flex: 0 0 auto;
+            margin: 18rpx 10rpx 0;
+            image{
+                width: 100%;
+                display: block;
+                height: 240rpx !important;
+            }
+            .pic{
+                color: #c20000;
+                font-size: 36rpx;
+                padding-top: 28rpx;
+                text{
+                    font-size: 24rpx;
+                }
+            }
+            .name{
+                color: #262626;
+                font-size: 30rpx;
+                line-height: 36rpx;
+                padding-top: 18rpx;
+                word-break: break-all;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="ban_logo"><image mode="widthFix" src="{{Bianlist.logo}}"></image></view>
+    <view class="banher">{{Bianlist.name}}</view>
+    <view class="bannews">{{Bianlist.desc}}</view>
+
+    <view class="banher1">产品列表</view>
+    <view class="Bianlist">
+        <repeat for="{{goodslist}}">
+            <view class="Bianlist_img" data-id="{{item.id}}" @tap="goTo" data-index="{{index}}">
+                <image mode="widthFix" src="{{item.thumb}}"></image>
+                <view class="name">{{item.name}}</view>
+                <view class="pic"> <text>￥</text>{{item.price}}</view>
+            </view>
+        </repeat>
+        
+    </view>
+
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import getExtJson from '../assets/getExtJson'
+
+    export default class BrandDetails extends wepy.page {
+        config= {
+            navigationBarTitleText:"品牌详情"
+        }
+
+        components = {
+        }
+
+        data = {
+            Bianlist: [
+                {
+                    logo:'',
+                    goods: [],
+                }
+            ],
+            goodslist: [],
+            api_host: '',
+            img_host: '',
+            config_id: '',
+            id: '',
+            page: 1,
+            maxPage: 1
+        }
+
+        methods = {
+            goTo(e){
+                let id = e.currentTarget.dataset.id
+                wepy.navigateTo({
+                    url: `shopDetails?id=${id}`
+                })
+            }
+        }
+        // 品牌详情数据请求
+        getBianlist() {
+            wx.request({
+                url: `${this.api_host}/restapi/goods-brands/${this.id}`,
+                data: {
+                    config_id: this.config_id,
+                },
+                success: (res) => {
+                    this.Bianlist.length = 0
+                    this.Bianlist = res.data.data
+                    this.Bianlist.logo = `${this.img_host}${res.data.data.logo}`,
+                    this.$apply()
+                    this.getBrandGoodsData()
+                    wepy.hideLoading()
+                }
+            })
+        }
+        // 品牌产品列表
+        getBrandGoodsData(){
+            wepy.request({
+                url: `${this.api_host}/restapi/goods`,
+                data: {
+                    config_id: this.config_id,
+                    brand_id: this.id,
+                    page: this.page,
+                    per_page: 8
+                },
+                success: res => {
+                    this.maxPage = res.data.data._meta.pageCount
+                    let goodslist = res.data.data.items.map( item => {
+                        return {
+                            id: item.id,
+                            thumb : item.thumb.indexOf('http') > -1 ? item.thumb : `${this.img_host}${item.thumb}`,
+                            name: item.name,
+                            price: item.price
+                        }
+                    })
+                    this.goodslist.push(...goodslist)
+                    this.$apply()
+                }
+            })
+        }
+        onReachBottom() {
+            console.log(1)
+            this.page++
+            if(this.page > this.maxPage) return
+            this.page = this.page >= this.maxPage ? this.maxPage : this.page
+            this.getBrandGoodsData(this.id)
+        }
+        onLaunch() {
+
+        }
+        onLoad(option){
+             getExtJson.call(this)
+            wepy.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+             this.id = option.id
+            this.getBianlist()
+            this.$apply()
+        }
+
+
+    }
+
+</script>

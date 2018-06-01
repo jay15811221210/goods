@@ -1,0 +1,283 @@
+<style lang="scss">
+    .partition_district{
+        font-size: 34rpx;
+        &_hot{
+            color: #fff;
+            width: 359rpx;
+            height: 217rpx;
+            float: left;
+            margin: 0 0 22rpx 0;
+            position: relative;
+            image{
+                width: 100%;
+                height: 217rpx;
+                position: absolute;
+                top:0;
+                left:0;
+                z-index: 1;
+            }
+            text{
+                display: inline-block;
+                padding: 30rpx 0 0 26rpx;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+        }
+        &_recommend{
+            color: #eadbb7;
+            width: 48%;
+            height: 217rpx;
+            float: left;
+            margin: 10rpx 1%;
+            position: relative;
+            image{
+                width: 100%;
+                height: 217rpx;
+                position: absolute;
+                top:0;
+                left:0;
+                z-index: 1;
+            }
+            text{
+                display: inline-block;
+                padding: 30rpx 0 0 26rpx;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+        }
+        &_new{
+            color: #d9ff71;
+            width: 330rpx;
+            height: 455rpx;
+            float: right;
+            position: relative;
+            image{
+                width: 100%;
+                height: 455rpx;
+                position: absolute;
+                top:0;
+                left:0;
+                z-index: 1;
+            }
+            text{
+                display: inline-block;
+                padding: 30rpx 0 0 26rpx;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+        }
+
+        .three .threelist:first-child{
+            color: #fff;
+            width: 359rpx;
+            height: 217rpx;
+            float: left;
+            margin: 0 0 22rpx 0;
+            position: relative;
+            image{
+                width: 100%;
+                height: 217rpx;
+                position: absolute;
+                top:0;
+                left:0;
+                z-index: 1;
+            }
+            text{
+                display: inline-block;
+                padding: 30rpx 0 0 26rpx;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+        }
+
+        .three .threelist:last-child{
+            color: #fff;
+            width: 359rpx;
+            height: 217rpx;
+            float: left;
+            margin: 0 0 22rpx 0;
+            position: relative;
+            image{
+                width: 100%;
+                height: 217rpx;
+                position: absolute;
+                top:0;
+                left:0;
+                z-index: 1;
+            }
+            text{
+                display: inline-block;
+                padding: 30rpx 0 0 26rpx;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+        }
+    }
+
+    .three .threelist:nth-child(2) {
+        color: #d9ff71;
+        width: 330rpx;
+        height: 455rpx;
+        float: right;
+        position: relative;
+        image{
+            width: 100%;
+            height: 455rpx;
+            position: absolute;
+            top:0;
+            left:0;
+            z-index: 1;
+        }
+        text{
+            display: inline-block;
+            padding: 30rpx 0 0 26rpx;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+    }
+    .onelist{
+        position: relative;
+        image{
+          width: 100%;
+        }
+        text{
+            display: inline-block;
+            padding: 30rpx 0 0 26rpx;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+    }
+    .one{
+        position: relative;
+        color: #fff;
+        image{
+            width: 100%;
+        }
+        text{
+            display: inline-block;
+            padding: 30rpx 0 0 26rpx;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+    }
+    .recommender{
+        width: 98%;
+    }
+    #goods4{
+        width: 98%;
+    }
+    #goodslist2{
+        width: 98%;
+    }
+    #goodslist5{
+        width: 98%;
+    }
+    #four1, #four2{
+        width: 48%;
+        color: #fff;
+    }
+    #four3{
+        color: #d9ff71;
+    }
+    #two0{
+        color: #d9ff71;
+    }
+    #three2{
+        color: #000;
+    }
+    #goods0, #goods3{
+        color: #d9ff71;
+    }
+    #goods1, #goods4{
+    }
+    #goodslist0, #goodslist2{
+        color: #fff;
+    }
+    #goodslist3, #goodslist5{
+        color: #d9ff71;
+    }
+</style>
+<template>
+    <view class="partition_district">
+
+        <view class="one" wx:for="{{goodsClass}}" wx:key="{{index}}"
+              wx:if="{{goodsClass.length == 1 }}" data-url="{{item.page}}" @tap="GoTo">
+            <image class="advertisement" src="{{item.icon}}"></image>
+        </view>
+
+        <view id="two{{index}}" class="partition_district_recommend  recommender" wx:for="{{goodsClass}}" wx:key="{{index}}"
+        wx:if="{{goodsClass.length == 2 }}" data-url="{{item.page}}" @tap="GoTo">
+            <image class="advertisement" src="{{item.icon}}"></image>
+        </view>
+
+        <view  wx:if="{{goodsClass.length == 3 }}" data-url="{{item.page}}" @tap="GoTo">
+            <view class="three">
+                <view id="three{{index}}" class="threelist" wx:for="{{goodsClass}}" wx:key="{{index}}" >
+                    <image class="advertisement" src="{{item.icon}}"></image>
+                </view>
+            </view>
+        </view>
+
+
+
+        <view id="four{{index}}" class="partition_district_recommend  recommender" wx:for="{{goodsClass}}" wx:key="{{index}}"
+              wx:if="{{goodsClass.length  == 4 }}" data-url="{{item.page}}" @tap="GoTo">
+            <view class="">
+                <view class="" wx:for="{{goodsClass}}" wx:key="{{index}}" >
+                    <image class="advertisement" src="{{item.icon}}"></image>
+                </view>
+            </view>
+        </view>
+
+        <view id="goods{{index}}" class="partition_district_recommend" wx:for="{{goodsClass}}" wx:key="{{index}}"
+        wx:if="{{goodsClass.length == 5 }}" data-url="{{item.page}}" @tap="GoTo">
+            <image class="advertisement" src="{{item.icon}}"></image>
+        </view>
+
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    export default class Partition extends wepy.component{
+        props= {
+            goodsClass: {
+                type: [Array, Object],
+                coerce: ss => {
+                    return ss
+
+                }
+            }
+        }
+
+        methods = {
+            GoTo(e) {
+                let url=e.currentTarget.dataset.url
+                wx.navigateTo({
+                    url: `${url}`,
+                    fail: res => {
+                        wx.switchTab({
+                            url: `${url}`
+                        })
+                    }
+                })
+            }
+        }
+
+    }
+</script>

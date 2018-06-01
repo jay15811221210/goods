@@ -1,0 +1,26 @@
+<style lang="scss">
+
+</style>
+
+<template>
+
+    <web-view src="{{url}}"></web-view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class webView extends wepy.page {
+        data = {
+            url: '' 
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(options){
+            this.url = options.url
+        }
+    }
+</script>

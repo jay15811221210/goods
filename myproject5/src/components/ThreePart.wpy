@@ -1,0 +1,89 @@
+
+<style lang="scss">
+    .single_part {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+    .single_img{
+        width: 200rpx;
+        float: left;
+        height: 200rpx;
+        margin-right: 20rpx;
+        .advertisement_img{
+            width: 100%;
+            height: 200rpx;
+        }
+    }
+    .single_tit{
+        width: 470rpx;
+        float: right;
+        .single_ti{
+            font-size: 30rpx;
+            color: #000;
+            margin-top: 10rpx;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .single_li{
+            color: 6f6f6f;
+            font-size: 22rpx;
+            margin-top: 20rpx;
+        }
+        .single_pic{
+            color: #e74545;
+            font-size: 30rpx;
+            margin-top: 50rpx;
+            text:first-child{
+                font-size: 24rpx;
+            }
+            text:last-child{
+                color: #5a5a5a;
+                margin-left: 26rpx;
+            }
+        }
+    }
+    .single_list{
+        width: 100%;
+        margin-top: 20rpx;
+    }
+</style>
+
+<template>
+    <view class="single_list {{partConfig.model}}" >
+        <view class="single" wx:if="{{partConfig.model == 'small'}}" id="{{partConfig.id}}" @tap="goTo">
+            <view class="single_img">
+                <image class="advertisement_img" mode="scaleToFill" src="{{partConfig.imgUrl}}"></image>
+            </view>
+            <view class="single_tit">
+                <view class="single_ti">{{partConfig.title}}</view>
+                <view class="single_li" style="padding-left: 0;">库存: {{partConfig.stock}}</view>
+                <view class="single_pic"><text>￥ </text>{{partConfig.price}} <text>{{partConfig.sales}}人付款</text></view>
+            </view>
+        </view>
+
+    </view>
+</template>
+
+<script>
+
+  import wepy from 'wepy'
+  export default class ThreePart extends wepy.component {
+      props = {
+          partConfig: {}
+      }
+      methods = {
+          goTo(e){
+              const id = e.currentTarget.id
+              wepy.navigateTo({
+                  url: `goodsInfo?id=${id}`
+              })
+          }
+      }
+      onLoad(){
+
+      }
+  }
+
+</script>

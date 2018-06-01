@@ -1,0 +1,81 @@
+<style lang="scss">
+    page{
+        height: 100%;
+    }
+    ::-webkit-scrollbar{
+        width: 0;
+        display: none;
+    }
+    .scroll_nav{
+        padding-bottom: 200rpx;
+        &_wrap{
+            height: 100%;
+            background: #fff;
+            
+        }
+        &_items{
+            height: 100rpx;
+            line-height: 100rpx;
+            text-align: center;
+            font-size: 30rpx;
+            color: #000;
+            border-bottom: 1px solid #f4f6f8;
+            &_active{
+                color: #ca0707;
+            }
+        }
+
+    }
+</style>
+
+<template>
+    <scroll-view class="scroll_nav_wrap" scroll-y="true" scroll-top="{{navScrollTop}}" scroll-with-animation="true">
+        <view class="scroll_nav">
+            <repeat for="{{navDeails}}">
+                <view class="scroll_nav_items {{item.id == selectedId ? 'scroll_nav_items_active' : ''}}" id="{{item.id}}" data-index="{{index}}" @tap="selectedFn">{{item.name}}</view>
+            </repeat>
+        </view>
+    </scroll-view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class ScrollNav extends wepy.component {
+        props = {
+            
+        }
+        data = {
+            currentIndex: 0
+        }
+        props = {
+            navDeails: {
+                type: Array,
+                coerce: (res) => {
+                    return res
+                }
+            },
+            selectedId:{
+                type: [Number, String],
+                coerce: (res) => {
+                    return res
+                }
+            },
+            navScrollTop: {
+                type: [Number, String],
+                coerce: res => res
+            }
+        }
+        methods = {
+            selectedFn(e){
+                this.selectedId = e.currentTarget.id
+                this.currentIndex = e.currentTarget.dataset.index
+                this.$emit('change', this.currentIndex, this.selectedId)
+            }
+        }
+        
+    }
+</script>
+

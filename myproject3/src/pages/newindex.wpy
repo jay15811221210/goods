@@ -1,0 +1,182 @@
+<style type="scss">
+  .goods {
+      &_part {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          .long {
+              width: 48%;
+              flex-shrink: 0;
+              margin-top: 20rpx;
+          }
+          .small {
+              width: 100%;
+              .smallimg{
+                  width: 100%;
+                  image{
+                      width: 100%;
+                  }
+              }
+              .smallname{
+                  color: #666;
+                  font-size: 26rpx;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  margin-top: 15rpx;
+                  text-indent: 14rpx;
+              }
+              .goods_pic{
+                  color: #ff0000;
+                  font-size: 34rpx;
+                  margin-top: 14rpx;
+                  text-indent: 14rpx;
+              }
+          }
+      }
+  }
+
+    .imglist{
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        border-bottom: 10rpx solid #e0dede;
+        margin-top: 20rpx;
+        .imgdata{
+            flex-shrink: 0;
+            width: 20%;
+            text-align: center;
+            padding: 10rpx 0;
+            image{
+                width: 70%;
+            }
+            view{
+                color: #fff;
+                font-size: 24rpx;
+            }
+        }
+
+    }
+</style>
+
+<template>
+        <view class="goods_list">
+
+            <view class="imglist">
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+                <view class="imgdata">
+                    <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                    <view>啊啊啊啊</view>
+                </view>
+
+            </view>
+
+
+            <view class="goods_part">
+                <view class="long">
+
+                    <view class="small">
+                        <view class="smallimg">
+                            <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                        </view>
+                        <view class="smallname">啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</view>
+                        <view class="goods_pic">$100</view>
+                    </view>
+
+                </view>
+
+                <view class="long">
+                    <view class="small">
+                        <view class="smallimg">
+                            <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                        </view>
+                        <view class="smallname">啊啊啊啊啊啊啊啊啊啊啊啊</view>
+                        <view class="goods_pic">$100</view>
+                    </view>
+                </view>
+
+                <view class="long">
+                    <view class="small">
+                        <view class="smallimg">
+                            <image mode="widthFix" src="http://mmbiz.qpic.cn/mmbiz_png/Tuqvm7r3WtTuSFBlGudyguQzSBSDAQkBX6nObm4ECE4ZGyrQ5sNrjQDR35YbYibbiaSwhNibSMpvY884IKfVJyePQ/0?wx_fmt=png"></image>
+                        </view>
+                        <view class="smallname">啊啊啊啊啊啊啊啊啊啊啊啊</view>
+                        <view class="goods_pic">$100</view>
+                    </view>
+                </view>
+
+            </view>
+        </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import getExtJson from '../assets/getExtJson'
+    import GoodsList from '../components/GoodsList'
+
+    export default class extends wepy.page {
+        components = {
+        }
+        data = {
+            goodsClass: [],
+        }
+
+        methods = {
+        }
+
+        onLaunch() {
+        }
+
+        onLoad() {
+            getExtJson.call(this)
+            this.$apply();
+        }
+
+    }
+</script>

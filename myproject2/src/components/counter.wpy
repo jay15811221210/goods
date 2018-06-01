@@ -1,0 +1,131 @@
+<style lang="scss">
+    .counter {
+        display:flex;
+        &__number {
+            box-sizing:border-box;
+            height: 50rpx;
+            border: 1rpx solid #dad7d7;
+            -webkit-border-radius: 4rpx;
+            border-radius: 4rpx;
+        }
+        &__modify {
+            display: inline-block;
+            height: 48rpx;
+            line-height: 48rpx;
+            text-align: center;
+            vertical-align: top;
+            color: #ff5777;
+            font-size:0;
+            padding:0;
+            background:none;
+        }
+        &__opt {
+            width: 56rpx;
+        }
+        &__text {
+            min-width: 58rpx;
+            border-left: 1rpx solid #dad7d7;
+            border-right: 1rpx solid #dad7d7;
+            color: #424242;
+            font-size: 28rpx;
+            box-sizing:border-box;
+            padding: 0 6rpx;
+        }
+        &__no {
+            color: #d2d2d2;
+        }
+        &__icon{
+            font-size: 24rpx;
+        }
+
+    }
+</style>
+
+<template>
+    <view class="counter">
+        <view class="counter__number">
+            <view class="counter__modify counter__opt{{number <= min || disabled ? ' counter__no' : ''}}" bindtap="minusHandler">
+                <xnricon type="back" color="#313131" fontSize="50rpx"></xnricon>
+            </view>
+
+            <text class="counter__modify counter__text{{disabled ? ' counter__no' : ''}}">{{number}}</text>
+            <view class="counter__modify counter__opt{{number >= max || disabled ? ' counter__no' : ''}}" bindtap="addHandler">
+                <xnricon1 type="jiantouyou" color="#313131" fontSize="50rpx"></xnricon1>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import xnricon from 'xnr-icon'
+    export default class Counter extends wepy.component {
+        components = {
+            xnricon: xnricon,
+            xnricon1: xnricon
+         }
+        props = {
+            number: {
+                type: [Number, String],
+                coerce: (newVal) => {
+                    console.log(newVal)
+                    return newVal
+                },
+                default: 0
+            },
+            max: {
+                type: [Number, String],
+                coerce: (newVal) => newVal,
+                default: 0
+            },
+            min: {
+                coerce: (newVal) => newVal,
+                default: 0
+            },
+            disabled: {
+                type: [Boolean],
+                coerce: (newVal) => newVal,
+                default: false
+            }
+        }
+        watch = {
+
+        }
+        methods = {
+            addHandler(e) {
+                if (this.max <= this.number || this.disabled) return
+//                this.number = ++this.number
+                console.log(this.number)
+                this.$emit('changenumber', {
+                    e: e,
+                    number: this.number,
+                    min: this.min,
+                    max: this.max,
+                    type: 'add'
+                })
+            },
+            minusHandler(e) {
+                if (this.min >= this.number || this.disabled) return
+                this.number = --this.number
+                this.$emit('changenumber', {
+                    e: e,
+                    number: this.number,
+                    min: this.min,
+                    max: this.max,
+                    type: 'minus'
+                })
+            }
+        }
+        resetCurrentNumber(){
+            console.log(this.max)
+            console.log(this.number)
+        }
+        onLoad(){
+            console.log(this.number)
+        }
+    }
+
+</script>
+
+

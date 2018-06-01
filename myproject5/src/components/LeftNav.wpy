@@ -1,0 +1,106 @@
+
+<style lang="scss">
+    .nav_wrap{
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+    .nav_info{
+        width: 100%;
+        padding: 0rpx;
+        background: #ffffff;
+    }
+    .left_nav{
+        &_wrap{
+            width: auto;
+            // height: 100%;
+            font-size: 24rpx;
+            padding-right: 12rpx;
+            flex-shrink: 0;
+        }
+        &_item{
+            width: 162rpx;
+            height: 72rpx;
+            line-height: 72rpx;
+            padding: 0 24rpx;
+            text-align: center;
+            border: 1px solid transparent;
+            box-sizing: border-box;
+            border-left:{
+                width: 4rpx;
+            }
+            &_active{
+                border: 1px solid #d4d3d3;
+                border-left:{
+                    color: red;
+                    width: 4rpx;
+                }
+                background: #fff;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="nav_wrap">
+        <scroll-view scroll-y="true" class="left_nav_wrap">
+            <view 
+                wx:for="{{leftNavConfig}}" 
+                class="left_nav_item {{inx == index ? 'left_nav_item_active' : ''}}" 
+                wx:key="{{index}}"
+                id="{{index}}"
+                @tap="changeInx"
+            >
+                <text>{{item.navText}}</text>
+            </view>
+        </scroll-view>
+        <view class="nav_info">
+            <tab-info :tabListConfig.sync="tabListConfig"></tab-info>
+        </view>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import TabInfo from '../components/TabInfo'
+    export default class LeftNav extends wepy.component{
+        data = {
+            inx: 0,
+            tabListConfig: []
+        }
+        props = {
+            leftNavConfig: {
+                type: Array,
+                coerce: (res) => res
+            }
+        }
+        watch = {
+            leftNavConfig(newVal){
+                let inx = this.inx
+                this.tabListConfig = newVal[inx].shopList 
+                this.$apply()
+            }
+        }
+        components = {
+            'tab-info':TabInfo
+        }
+        methods = {
+            changeInx(e){
+                let inx = e.currentTarget.id
+                this.inx = inx
+
+                this.tabListConfig = this.leftNavConfig[inx].shopList
+                this.$apply()
+            }
+        }
+
+        onLoad(){
+            
+        }
+    
+    }
+</script>
+
+

@@ -1,0 +1,109 @@
+
+<style lang="scss">
+    $height: 100rpx;
+    %btn{
+        width: 300rpx;
+        height: $height;
+        line-height: $height;
+        text-align: center;
+        border-radius: 14rpx;
+        font-size: 36rpx;
+        color: #fff;
+        margin: 16rpx auto;
+    }
+    .success{
+        &_top{
+            text-align: center;
+            padding: 90rpx 0;
+            color: #d53b33;
+            image{
+                width: 150rpx;
+                height: 150rpx;
+            }
+            view{
+                margin-top: 30rpx;
+            }
+        }
+        &_shop{
+            background-color: #d53b33;
+            @extend %btn;
+        }
+        &_look{
+            background-color: #169bd4;
+            @extend %btn;
+        }
+    }
+
+</style>
+
+<template>
+    
+    <view class="success">
+
+        <view class="success_top">
+            <image src="../images/success.png"></image>
+            <view>{{text}}</view>
+        </view>
+
+        <view class="success_shop" @tap="goTo" data-url="index">
+            继续购物
+        </view>
+
+        <view class="success_look" @tap="goTo" data-url="memberInfo">
+            查看订单
+        </view>
+
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class PaySuccess extends wepy.page{
+        methods = {
+            goTo(e){
+                const url = e.currentTarget.dataset.url
+                if(url === 'index'){
+                    wepy.switchTab({
+                        url: url
+                    })
+                }else{
+                    wepy.navigateTo({
+                        url: 'memberInfo?index=4'
+                    })
+                    // if(this.navLogo == 1){ //在商品列表直接购买 值为 1
+                    //     wepy.redirectTo({
+                    //         url: url
+                    //     })
+                    // }else if(this.navLogo == 0){ //在订单详情购买 值为 0
+                    //     wepy.navigateBack({
+                    //         delta: 2
+                    //     })
+                    // }else if(this.navLogo == 2){ //退款 或 订单列表页购买 值为2
+                    //     wepy.navigateBack({
+                    //         delta: 1
+                    //     })
+                    // }
+                }
+                
+            }
+        }
+        data = {
+            text: '',
+            navLogo: ''
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(option){
+            this.navLogo = option.nav
+            if(option.text == 1){
+                this.text = '购买成功'
+            }else if(option.text == 0){
+                this.text = '退款受理中'
+            }
+        }
+    }
+</script>

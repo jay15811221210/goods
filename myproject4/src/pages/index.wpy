@@ -1,0 +1,299 @@
+<style lang="scss">
+    .carousel {
+        width: 100%;
+        height: 422rpx;
+        .section_img {
+            width: 100%;
+            height: 8rpx;
+            background: #ebebeb;
+        }
+    }
+    .dots_wrap_center {
+        display: none;
+    }
+    .scroll_tab_wrap{
+        border-bottom: 17rpx solid #fff;
+    }
+    .scroll_tab_cont{
+        height: 88rpx;
+        line-height: 88rpx;
+    }
+
+
+
+    .tab_view{
+        padding: 0 20rpx;
+        margin-top: 50rpx;
+        column-count:2;
+        column-gap:20px;
+        &_items{
+            box-sizing:border-box;
+            margin-bottom:22px;
+            height:100%;
+            overflow:auto;
+
+        }
+
+    }
+
+    .tab_view_img{
+        width: 100%;
+        height: 250rpx;
+        image{
+            width: 100%;
+            background: #fff;
+            display: block;
+            height: 250rpx!important;
+        }
+    }
+    .tab_view_title{
+        font-size: 30rpx;
+        overflow: hidden;
+        -webkit-line-clamp: 1;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        box-sizing: border-box;
+        color: #333333;
+        margin-top: 24rpx;
+    }
+    .tab_view_price{
+        width: 100%;
+        font-size: 28rpx;
+        color: #b60000;;
+        line-height: 48rpx;
+        margin-top: 13rpx;
+        margin-bottom: 35rpx;
+        border-bottom: 1px solid #cccccc;
+    }
+</style>
+
+<template>
+    <view class="carousel">
+        <!-- 轮播图 -->
+        <carousel :carouselConfig.sync="carouselConfig"></carousel>
+
+        <!-- 导航 -->
+        <nav :navConfig.sync="navConfig"></nav>
+
+        <!--广告-->
+        <view class="section_img"></view>
+
+        <!--商品导航分类-->
+        <view class="tav_nav">
+            <scroll-tab
+                    :labelData.sync="labelData"
+                    :animate.sync="animate"
+                    :defaultIndex.sync="defaultIndex"
+                    @tabchange.user="tabChange"
+            ></scroll-tab>
+        </view>
+
+        <!--商品分类-->
+        <view class="tab_view">
+            <repeat for="{{showContentData}}">
+                <view class="tab_view_items" data-id="{{item.id}}" @tap="goTo">
+                    <view class="tab_view_imgs">
+                        <view class="tab_view_img">
+                            <image src="{{item.thumb}}" mode=""></image>
+                        </view>
+                        <view class="tab_view_context">
+                            <view class="tab_view_title">
+                                {{item.name}}
+                            </view>
+                            <view class="tab_view_price">
+                                <text></text>{{item.price}}
+                            </view>
+                        </view>
+                    </view>
+
+
+                </view>
+            </repeat>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Carousel from 'xnr-swiper'
+    import getExtJson from '../assets/getExtJson'
+    import Nav from '../components/Nav'
+    import ScrollTab from '../components/ScrollTab'
+    import Commodity from '../components/Commodity'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+
+    export default class extends wepy.page {
+        components = {
+            carousel: Carousel,
+            nav: Nav,
+            'scroll-tab': ScrollTab,
+            commodity: Commodity
+        }
+        data = {
+            carouselConfig: {
+                imgUrls: [],
+            },
+            showContentData: [],
+            navConfig: [],
+            commodity: [],
+            labelData: [],
+            defaultIndex: 0,
+            animate: true,
+            viewId: '',
+        }
+
+
+        methods = {
+            tabChange(e){
+                wepy.showLoading({
+                    title: '读取中...'
+                })
+                this.showContentData.length = 0
+                this.page = 1
+                if(!this.labelData[e.index]) return
+                this.getContentGoodsData(this.labelData[e.index].id)
+            },
+            goTo(e){
+                const id = e.currentTarget.dataset.id
+                wepy.navigateTo({
+                    url: `shopDetails?id=${id}`
+                })
+            }
+        }
+
+
+
+        // 获取菜单数据
+        getMenu(data) {
+            if (wx.getExtConfig) {
+                wx.getExtConfig({
+                    success: (res) => {
+                        // pages/article
+                        const menu = this.menu.map((item) => {
+                            let url = item.page.split('?')
+                            let obj
+                            if (url[1]) {
+                                obj = {}
+                                let key = url[1].split('=')[0]
+                                let val = url[1].split('=')[1]
+                                obj[key] = val
+                            }
+                            return {
+                                imgUrl: `${this.img_host}${item.icon}`,
+                                navText: item.name,
+                                navTo: url[0],
+                                query: obj
+                            }
+                        })
+                        menu && (this.navConfig = menu)
+                        this.$apply()
+                    }
+                })
+            }
+        }
+
+        // 轮播图数据请求
+        getCarousel() {
+            wx.request({
+                url: `${this.api_host}/restapi/wechat-focus`,
+                data: {
+                    config_id: this.config_id,
+                    belongs: 1,
+                    type: 0
+                },
+                success: (res) => {
+                    console.log(1, res)
+                    const data = res.data.data.map((item) => {
+                        return `${this.img_host}${item.image}`
+                    })
+                    this.carouselConfig.imgUrls = data
+                    this.$apply()
+                }
+            })
+        }
+        getCategoryTitle(){
+            wepy.request({
+                url: `${this.api_host}/restapi/goods-category`,
+                data: {
+                    config_id: this.config_id,
+                    type: 0
+                },
+                success: res => {
+                    if(res.data.success){
+                        res.data.data.items.forEach( item => {
+                            if(item.level == 1){
+                                this.labelData.push({
+                                    title: item.name,
+                                    id: item.id
+                                })
+                            }
+                        })
+                        this.labelData.unshift({
+                            title: '全部',
+                            id: ''
+                        })
+                        for (let i = 0, I = this.labelData.length; i < I; i++) {
+                            if(this.labelData[i].id == this.viewId){
+                                this.defaultIndex = i
+                                this.$apply()
+                                break
+                            }
+                        }
+                        this.$apply()
+                    }
+
+                }
+            })
+        }
+        getContentGoodsData(id){
+            this.viewId = id
+            let data
+            if(id){
+                data = {
+                    config_id: this.config_id,
+                    category_id: id
+                }
+            }else{
+                data = {
+                    config_id: this.config_id,
+                }
+            }
+            wepy.request({
+                url: `${this.api_host}/restapi/goods`,
+                data: data,
+                success: res => {
+                    this.maxPage = res.data.data._meta.pageCount
+                    this.showContentData = res.data.data.items.filter( item => {
+                        item.thumb = item.thumb.indexOf('http') > -1 ? item.thumb : `${this.img_host}${item.thumb}`
+                        item.price = retainedDecimalMoney(item.price)
+                        return item
+                    })
+
+                    this.$apply()
+                    wepy.hideLoading()
+                }
+            })
+        }
+        onLoad() {
+            getExtJson.call(this)
+            /*
+      * 通过ext.json传入的swiper 数据 修改轮播图的样式
+      * */
+            if (this.swiper) {
+                for (let i in this.swiper) {
+                    this.carouselConfig[i] = this.swiper[i]
+                }
+            }
+            this.getMenu()
+            this.getCarousel()
+            this.getCategoryTitle()
+        }
+        onLaunch() {
+            this.viewId = options.id
+            wepy.showLoading({
+                title: '读取中...'
+            })
+        }
+
+    }
+</script>

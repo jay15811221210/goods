@@ -1,0 +1,99 @@
+
+<style lang="scss">
+    .min_num_picker{
+        &_wrap{
+            display: flex;
+            text-align: center;
+        }
+        &_btns{
+            width: 60rpx;
+            padding: 0 12rpx;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+        &_input{
+            flex-grow: 0;
+            height: 50rpx;
+        }
+    }
+</style>
+
+<template>
+
+    <view class="min_num_picker_wrap">
+        <view class="min_num_picker_btns" @tap="reduce">
+            <text class="iconfont icon-jian"></text>
+        </view>
+
+        <view class="num_picker_input">
+            <input type="number" value="{{currentNum}}" disabled="{{disabled}}" @input="numChange" />
+        </view>
+
+        <view class="min_num_picker_btns" @tap="plus">
+            <text class="iconfont icon-jia"></text>
+        </view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class MinNumPicker extends wepy.component{
+        
+        data = {
+            // currentNum: 1, //选择器数量
+            // maxNum: 99, //最大数
+            // minNum: 1, //最小数
+            // disabled: true //输入框是否不可用
+        }
+        props = {
+            currentNum: {
+                type: [Number,String],
+                coerce: (res) => {
+                    return res
+                }
+            },
+            maxNum: {
+                type: [Number,String],
+                coerce: (res) => {
+                    return res
+                },
+                default: 99
+            },
+            minNum: {
+                type: [Number,String],
+                coerce: (res) => {
+                    return res
+                },
+                default: 1
+            },
+            disabled: {
+                type: Boolean,
+                coerce: (res) => {
+                    return res
+                },
+                default: true
+            }
+        }
+        methods = {
+            reduce(){
+                this.currentNum--
+                this.currentNum = this.currentNum < this.minNum ? this.minNum : this.currentNum
+                this.$apply()
+            },
+            plus(){
+                this.currentNum++
+                this.currentNum = this.currentNum > this.maxNum ? this.maxNum : this.currentNum
+                this.$apply()
+            }
+        }
+        onLoad(){
+            this.currentNum = this.currentNum ? this.currentNum : this.minNum
+        }
+    }
+
+</script>
+
+

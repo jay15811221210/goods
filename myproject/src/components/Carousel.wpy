@@ -1,0 +1,110 @@
+
+<style lang="scss">
+
+    .carousel_wrap{
+
+        width: 100%;
+        /*height: 422rpx;*/
+        height: 100%;
+        swiper{
+
+        }
+
+        .slide_image{
+            width: 100%;
+            height: 100%;
+        }
+
+    }
+
+    .mask{
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding-left: 35rpx;
+        height: 88rpx;
+        background: rgba(0,0,0,0.3);
+        line-height: 88rpx;
+        font-size: 35rpx;
+        color: white;
+    }
+
+
+</style>
+
+<template>
+
+    <!--
+        调用时传入配置对象
+            imgUrls 类型数组 存放图片地址
+            autoplay 类型bol 默认true
+            interval 自动切换时间间隔 默认2000
+            duration 运动时间 默认 500
+            loop 循环滚动 默认true
+            dots 指示点 默认false
+            dotsColor 指示点颜色
+            dotsActiveColor 当前指点颜色
+            mode 图片裁切方式
+            mask 轮播图下面遮罩层 显示的文字描述 如果有就显示 没有就隐藏
+     -->
+    <view class="carousel_wrap">
+
+        <swiper
+                class="carousel_wrap"
+                indicator-dots="{{carouselConfig.dots}}"
+                autoplay="{{carouselConfig.autoplay}}"
+                interval="{{carouselConfig.interval}}"
+                duration="{{carouselConfig.duration}}"
+                circular="{{carouselConfig.loop}}"
+                indicator-color="{{carouselConfig.dotsColor}}"
+                indicator-active-color="{{carouselConfig.dotsActiveColor}}"
+        >
+
+            <block wx:for="{{carouselConfig.imgUrls}}" wx:key="{{carouselConfig.index}}">
+
+                <swiper-item>
+                    <image src="{{item}}" mode="{{carouselConfig.center}}" class="slide_image" />
+                    <view class="mask" wx:if="{{item.mask}}">
+                        {{item.mask}}
+                    </view>
+                </swiper-item>
+
+            </block>
+
+        </swiper>
+
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class Carousel extends wepy.component{
+        data = {
+            currentDot: 0,
+            carousel: null
+        }
+        props = {
+            carouselConfig: {
+                type: Object,
+                coerce: function (res){
+                    if(!res.mode) res.mode = ''
+                    if(typeof res.dots !== 'boolean') res.dots = true
+                    if(typeof res.loop !== 'boolean') res.loop = true
+                    if(typeof res.autoplay !== 'boolean') res.autoplay = true
+                    if(!res.interval) res.interval = 3000
+                    if(!res.duration) res.duration = 1000
+                    return res
+                },
+                default: {}
+            }
+        }
+        onLoad(){
+
+        }
+
+    }
+
+</script>

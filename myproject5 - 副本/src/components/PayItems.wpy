@@ -1,0 +1,149 @@
+
+<style lang="scss">
+    .pay_items{
+        &_wrap{
+            display: flex;
+            padding: 10rpx;
+            margin: 12rpx 0;
+        }
+        &_msg{
+            margin-left: 14rpx;
+            flex-grow: 1;
+            border-bottom: 1px dashed #eeeeee;
+            padding-bottom: 28rpx;
+        }
+        &_img{
+            $imgSize: 260rpx;
+            width: $imgSize;
+            height: $imgSize;
+            flex-shrink: 0;
+            background: {
+                size: cover;
+                position: center;
+            }
+        }
+        &_name{
+            font-size: 32rpx;
+            line-height: 48rpx;
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            margin-bottom: 53rpx;
+        }
+        &_price{
+            $priceSize: 60rpx;
+            height: $priceSize;
+            line-height: $priceSize;
+            font-size: 36rpx;
+            text:first-child{
+                float: left;
+                font-size: 28rpx;
+            }
+            text:last-child{
+                color: #dd6130;
+                float: right;
+                font-size: 36rpx;
+            }
+        }
+    }
+    .picker_num{
+        width: 240rpx;
+        float: left;
+    }
+    .min_num_picker{
+        &_wrap{
+            display: flex;
+            color: #666666;
+            font-size: 26rpx;
+        }
+        &_btns{
+            width: 60rpx;
+            padding: 0 12rpx;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            font-size: 28rpx;
+        }
+        &_input{
+            font-size: 26rpx;
+            flex-grow: 0;
+            height: 50rpx;
+            text{
+                padding-right: 15rpx;
+            }
+            input{
+                margin-top: 5rpx;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="pay_items_wrap">
+        <view class="pay_items_img" style="background-image: url({{payItemsConfig.thumb}})"></view>
+        <view class="pay_items_msg">
+            <view class="pay_items_name">
+                {{payItemsConfig.goods_name}}
+            </view>
+            <view class="pay_items_price">
+                <view class="picker_num">
+                    
+                    <view class="min_num_picker_wrap">
+                        <view class="min_num_picker_input">
+                            <text>规格: </text> <input type="number" value="{{payItemsConfig.quantity}}" disabled="{{disabled}}" />
+                        </view>
+                    </view>
+                    <view class="min_num_picker_wrap">
+                        <view class="min_num_picker_input">
+                            <text>数量: </text> <input type="number" value="{{payItemsConfig.quantity}}" disabled="{{disabled}}" />
+                        </view>
+                    </view>
+
+                </view>
+                <text>{{payItemsConfig.allPrice}}</text>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class PayItems extends wepy.component{
+        
+        // props = {
+        //     parItemsConfig: {
+        //         type: Array,
+        //         coerce: (res) => {
+        //             return res
+        //         }
+        //     }
+        // }
+        data = {
+            disabled: true
+        }
+        methods = {
+            reduce(e){
+                let obj = {
+                    reduce: true,
+                    id: e.currentTarget.id
+                }
+                this.$emit('changeNum', obj)
+            },
+            plus(e){
+                let obj = {
+                    plus: true,
+                    id: e.currentTarget.id
+                }
+                this.$emit('changeNum', obj)
+            }
+        }
+        onLoad(){
+            
+        }
+
+    }
+</script>
+
+

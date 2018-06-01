@@ -1,0 +1,206 @@
+<style lang="scss">
+    page{
+        background: #f4f6f8;
+    }
+    .category_deails{
+        height: 100%;
+        display: flex;
+        &_nav{
+            width: 180rpx;
+            height: 100%;
+            flex-shrink: 0;
+            border-left: 1px solid #eee;
+        }
+        &_view{
+            flex: 1;
+            flex-shrink: 1;
+            height: 100%;
+            margin-left: 21rpx;
+        }
+    }
+
+</style>
+
+<template>
+    
+    <view class="category_deails">
+        <view class="category_deails_nav">
+            <left-nav :navDeails.sync="navDeails" :selectedId.sync="selectedId" :navScrollTop.sync="navScrollTop" @change.user="navChange"></left-nav>
+        </view>
+        <view class="category_deails_view">
+            <view-scroll :viewDeails.sync="viewDeails" :scrollTop.sync="scrollTop" :titleTop.sync="titleTop" @change.user="viewChange"></view-scroll>
+        </view>
+        
+    </view>
+
+</template>
+ 
+<script>
+
+    import wepy from 'wepy'
+    import leftNav from '../components/scrollDeails/ScrollNav'
+    import ScrollView from '../components/scrollDeails/ScrollView'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+    import getExtJson from '../assets/getExtJson'
+
+    export default class categoryScrollDetail extends wepy.page {
+        components = {
+            'left-nav': leftNav,
+            'view-scroll': ScrollView
+        }
+        data = {
+            navDeails: [
+                {
+                    idName: 'apply'
+                }
+            ],
+            viewDeails: {
+                // apple: {
+                //     name: '',
+                //     children: [
+
+                //     ]
+                // }
+            },
+            selectedId: 1,
+            titleTop: [],
+            scrollTop: 0,
+            navId: [],
+            navTop: [],
+            navScrollTop: 0
+        }
+        getCategoryData(){
+            return new Promise( (resolve, reject) => {
+                wepy.request({
+                    url: `${this.api_host}/restapi/goods-category`,
+                    data: {
+                        config_id: this.config_id,
+                        type: 0
+                    },
+                    success: res => {
+                        if(res.data.success){
+                            this.navDeails = res.data.data.items.filter( item => {
+                                return item.level == 1
+                            })
+                            this.$apply()
+                            resolve(this.navDeails)
+                        }
+                        
+                    }
+                })
+            })
+            
+        }
+        getGoodsData(){
+            wepy.request({
+                url: `${this.api_host}/restapi/goods`,
+                data: {
+                    config_id: this.config_id
+                },
+                success: res => {
+                    this.navId = []
+                    this.navDeails.forEach( element => {
+                        this.viewDeails['s' + element.id] = {}
+                        this.viewDeails['s' + element.id].name = element.name
+                        this.navId.push(element.id)
+                        this.viewDeails['s' + element.id].children = res.data.data.items.filter( item => {
+                            if(item.category_id == element.id){
+                                if(item.thumb.indexOf('http') == -1){
+                                    item.thumb = `${this.img_host}${item.thumb}`
+                                }
+                                item.price = retainedDecimalMoney(item.price)
+                                return item
+                            }
+                             
+                        })
+                    })
+                    this.$apply()
+                    setTimeout(() => {
+                        wx.createSelectorQuery()
+                            .selectAll('.scroll_view_items_tit')
+                            .boundingClientRect()
+                            .exec( res => {
+                                this.titleTop = res[0].map( item => {
+                                    return item.top
+                                })
+                                this.$apply()
+                                this.navId.forEach( (item, index) => {
+                                    if(item == this.selectedId){
+                                        this.scrollTop = this.titleTop[index]
+                                    }
+                                })
+                            })
+                        wx.createSelectorQuery()
+                            .selectAll('.scroll_nav_items')
+                            .boundingClientRect()
+                            .exec( res => {
+                                this.navTop = res[0].map( item => {
+                                    return item.top
+                                })
+                                this.$apply()
+                                this.navId.forEach( (item, index) => {
+                                    if(item == this.selectedId){
+                                        wx.createSelectorQuery()
+                                            .select('.category_deails_nav')
+                                            .fields({
+                                                size: true
+                                            }).exec( res => {
+                                                if(res[0].height / 2 < this.navTop[index]){
+                                                    this.navScrollTop = (43 * index - res[0].height / 2) + 120
+                                                }else{
+                                                    this.navScrollTop = 0
+                                                }
+                                            })
+                                    }
+                                })
+                            })
+                    }, 300)
+                }
+            })
+        }
+        methods = {
+            navChange(index, id){
+                if(this.scrollTop == this.titleTop[index]){
+                    this.scrollTop = 0.01
+                    return 
+                }
+                this.scrollTop = this.titleTop[index]
+            },
+            viewChange(index, currentScrollTop){
+                this.selectedId = this.navId[index]
+                wx.createSelectorQuery()
+                    .select('.category_deails_nav')
+                    .fields({
+                        size: true
+                    }).exec( res => {
+                        if(res[0].height / 2 < this.navTop[index]){
+                            this.navScrollTop = (43 * index - res[0].height / 2) + 120
+                        }else{
+                            this.navScrollTop = 0
+                        }
+                    })
+            }
+        }
+        onShareAppMessage() {
+
+        }
+        onLoad(option){
+            getExtJson.call(this)
+            // wepy.showLoading({
+            //     title: '加载中...',
+            //     mask: true
+            // })
+            wepy.setNavigationBarTitle({
+                title: option.name
+            })
+            this.getCategoryData().then( res => {
+                this.getGoodsData()
+            })
+            
+            this.selectedId = +option.id
+            this.$apply()
+        }
+    }
+</script>
+
+

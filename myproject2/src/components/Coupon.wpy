@@ -1,0 +1,163 @@
+
+<style lang="scss">
+    .title{
+        text-align: center;
+    }
+    .coupon{
+        $c_height: 184rpx;
+        &_wrap{
+            display: flex;
+            justify-content: space-between;
+        }
+        &_scroll{
+            padding: 14rpx 30rpx;
+            box-sizing: border-box;
+            width: 100%;
+            overflow: hidden;
+        }
+        &_item{
+            display: flex;
+            width: 230rpx;
+            flex-grow: 1;
+            flex-shrink: 0;
+            border: 1px solid #fc3e62;
+            border-radius: 12rpx;
+            justify-content: space-between;
+            margin-right: 8rpx;
+            position: relative;
+            &:last-of-type{
+                margin-right: 0;
+            }
+            &_left{
+                height: $c_height;
+                padding: 8rpx;
+                box-sizing: border-box;
+                view{
+                    height: $c_height - 8 * 2;
+                    display: table-cell;
+                    vertical-align: middle;
+                }
+                text{
+                    display: block;
+                    font-size: 24rpx;
+                }
+                &_money{
+                    font-size: 36rpx!important;
+                    color: #fc3e62;
+                }
+                &_name{
+                    color: #fc3e62;
+                }
+            }
+            &_right{
+                width: 50rpx;
+                height: $c_height;
+                flex-shrink: 0;
+                font-size: 24rpx;
+                background-color: #fc3e62;
+                text-align: center;
+                color: #fff;
+                padding: 8rpx;
+                box-sizing: border-box;
+                line-height: 1.2;
+                &_not{
+                    background: #ccc;
+                }
+                view{
+                    height: $c_height - 8 * 2;
+                    display: table-cell;
+                    vertical-align: middle;
+                }
+            }
+        }
+        &_active{
+            font-weight: bolder;
+            font-size: 48rpx;
+            color: #fc3e62;
+            margin: 12rpx;
+            position: absolute;
+            right: 0;top: 0;
+        }
+    }
+</style>
+
+<template>
+
+    <view class="wrap">
+        <view class="title" wx:if="{{couponConfig.title}}">
+            {{couponConfig.title}}
+        </view>
+        <scroll-view class="coupon_scroll" scroll-x="true">
+            <view class="coupon_wrap">
+                <repeat for="{{couponConfig.data}}">
+                    <view class="coupon_item" @tap="couponSelected" id="{{index}}">
+                        <view class="coupon_item_left">
+                            <view>
+                                <text class="coupon_item_left_money">{{item.money}}</text>
+                                <text>满{{item.terms}}可用</text>
+                                <text class="coupon_item_left_name">{{item.name}}</text>
+                                <text class="coupon_item_left_name">即日 - {{item.expireTime}}</text>
+                            </view>
+                        </view>
+
+                        <view class="iconfont icon-chenggong coupon_active" wx:if="{{!couponConfig.obtainBtn && couponActives[index]}}"></view>
+
+                        <view class="coupon_item_right {{item.isGet > 0 ? 'coupon_item_right_not' : ''}}" wx:if="{{couponConfig.obtainBtn}}">
+                            <view @tap="getCoupon" id="{{item.id}}" data-index="{{index}}" data-method="{{item.method}}" data-isget="{{item.isGet}}">
+                                <text>{{item.obtainBtnText}}</text>
+                            </view>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+        </scroll-view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class Coupon extends wepy.component {
+        props = {
+            couponConfig: {
+                type: Array,
+                coerce: (res) => {
+                    return res
+                }
+            }
+        }
+        data = {
+            couponActives: [],
+            selectedOnOff: false,
+            oldId: ''
+        }
+        methods = {
+            couponSelected(e){
+                if(this.couponConfig.obtainBtn) return
+                let id = +e.currentTarget.id
+                if(this.oldId === id){
+                    this.selectedOnOff = !this.selectedOnOff
+                }else{
+                    this.selectedOnOff = true
+                }
+                this.oldId = id
+                for(let i in this.couponConfig.data){
+                    this.couponActives[i] = false
+                    if(i == id) this.couponActives[i] = this.selectedOnOff
+                }
+                this.selectedOnOff ? this.$emit('selected', this.couponConfig.data[id]) : this.$emit('selected', '')
+            },
+            getCoupon(e){
+                const index = e.currentTarget.dataset.index
+                const method = e.currentTarget.dataset.method
+                const id = e.currentTarget.id
+                if(e.currentTarget.dataset.isget > 0) return
+                this.$emit( method, index, id)
+            }
+        }
+    }
+</script>
+
+

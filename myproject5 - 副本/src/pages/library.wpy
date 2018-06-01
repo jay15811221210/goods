@@ -1,0 +1,422 @@
+
+<style lang="scss">
+    .library{
+        &_not{
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        &_not_cont{
+            text-align: center;
+            image {
+                width: 40%;
+                display: block;
+                margin: 0 auto;
+            }
+            text{
+                font-size: 26rpx;
+                color: #d8d8d7;
+            }
+        }
+    }
+    .library_list{
+        &_head{
+            padding: 12rpx 30rpx;
+            &:after{
+                content: '';
+                display: block;
+                clear: both;
+            }
+            checkbox-group{
+                &:after{
+                    content: '';
+                    display: block;
+                    clear: both;
+                }
+                display: block;
+                font-size: 32rpx;
+                view{
+                    float: left;
+                    display: flex;
+                    margin-right: 32rpx;
+                    &.del{
+                        float: right;
+                        font-size: 36rpx;
+                        color: #999;
+                        margin-right: 0;
+                    }
+                }
+                label{
+                    $labelSize: 40rpx;
+                    width: $labelSize;
+                    height: $labelSize;
+                    display: block;
+                    border: 1px solid #ccc;
+                    border-radius: 50%;
+                    line-height: $labelSize;
+                    text-align: center;
+                    margin-right: 12rpx;
+                    font-size: $labelSize / 2;
+                    color: #ec4646;
+                    &.icon-duigou{
+                        border-color: #ec4646;
+                    }
+                }
+                checkbox{
+                    display: none;
+                }
+            }
+        }
+        &_bar{
+            width: 100%;
+            height: 88rpx;
+            line-height: 88rpx;
+            display: flex;
+            position: fixed;
+            left: 0;bottom: 0;
+            background-color: #fff;
+            font-size: 32rpx;
+            checkbox-group{
+                .select_all{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding-left: 30rpx;
+                }
+            }
+            label{
+                $labelSize: 40rpx;
+                width: $labelSize;
+                height: $labelSize;
+                display: block;
+                border: 1px solid #ccc;
+                border-radius: 50%;
+                line-height: $labelSize;
+                text-align: center;
+                margin-right: 12rpx;
+                font-size: $labelSize / 2;
+                color: #ec4646;
+                &.icon-duigou{
+                    border-color: #ec4646;
+                }
+            }
+            checkbox{
+                display: none;
+            }
+            &_total{
+                flex-grow: 1;
+                padding-right: 40rpx;
+                text-align: right;
+                color: #eb4444;
+            }
+            &_btn{
+                width: 200rpx;
+                text-align: center;
+                background-color: #df3636;
+                color: #f1f1f1;
+            }
+        }
+    }
+    .icon_size{
+        font-size: 156rpx;
+    }
+</style>
+
+<template>
+
+    <view class="library_wrap">
+        <!-- 购物车为空时显示  -->
+        <view class="library_not" wx:if="{{not}}">
+            <view class="library_not_cont">
+                <image mode="widthFix" src="../image/cart.png"></image>
+                <text>购物车空空如也
+                    去挑几件中意的商品吧
+                </text>
+            </view>
+        </view>
+
+        <view class="library_list_wrap" wx:if="{{!not}}">
+            <!-- <view class="library_list_head">
+                <checkbox-group @change="checkedChange">
+                    <view @tap="selectAll">
+                        <label class="iconfont {{allSelect ? 'icon-duigou' : ''}}">
+                            <checkbox value="{{index}}" checked="{{allSelect}}"></checkbox>
+                        </label>全选
+                    </view>
+                    <view @tap="reverseSelect">
+                        反选
+                    </view>
+                    <view class="del iconfont icon-shanchu" @tap="delSelect"></view>
+                </checkbox-group>
+            </view> -->
+            <!-- <repeat for="{{libList.items}}"> -->
+                <!-- libraryItemConfig商品信息数量总价等值为数组每一项为对象
+                    goods_id 商品id
+                    goods_name  商品名称
+                    skucode skucode
+                    props   规格
+                    price   单价
+                    quantity  数量
+                    total   总价
+                    thumb   缩略图
+index 是循环libList的索引值为number checked为多选框选择集合值为数组 changeChecked多选框change事件接受字符串暂时只能用变量携带字符串 -->
+                <library-item :libraryItemConfig.sync="libList" :checked.sync="checked" :changeChecked.sync="changeChecked"></library-item>
+            <!-- </repeat> -->
+
+            <view class="library_list_bar">
+                <checkbox-group @change="checkedChange">
+                    <view class="select_all" @tap="selectAll">
+                        <label class="iconfont {{allSelect ? 'icon-duigou' : ''}}">
+                            <checkbox value="{{index}}" checked="{{allSelect}}"></checkbox>
+                        </label>
+                        <view>
+                            全选
+                        </view>
+                    </view>
+                </checkbox-group>
+                <view class="library_list_bar_total">
+                    {{allTotal}}
+                </view>
+                <view class="library_list_bar_btn" @tap="toPay">
+                    结算
+                </view>
+            </view>
+        </view>
+        <toast />
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import LibraryItem from '../components/LibraryItem'
+    import retainedDecimalMoney from '../assets/retainedDecimalMoney'
+    import getExtJson from '../assets/getExtJson'
+    import Toast from 'wepy-com-toast'
+
+    export default class Library extends wepy.page {
+
+        data = {
+            libList: {},
+            not: true,
+            checked: [],
+            changeChecked: 'changeChecked',
+            allSelect: false,
+            allTotal: 0
+        }
+        components = {
+            'library-item': LibraryItem,
+            toast: Toast
+        }
+        getLibData(){
+            this.libList = wepy.getStorageSync('selectedGoods')
+            this.libList ? this.libList.items.length > 0 ? this.not = false : this.not = true : this.not = true;
+
+            if(!this.not){
+                // wepy.showModal({
+                //     title: '提示',
+                //     content: '长按商品可以编辑呦',
+                //     showCancel: false,
+                //     confirmText: '知道了'
+                // })
+                this.isChangeLibData()
+                this.getAllTotal()
+            }else{
+                wepy.hideLoading()
+            }
+        }
+        isChangeLibData(){
+            let goodsKey = this.libList.items.map( item => {
+                if(item.skucode){
+                    return `${item.goods_id}_${item.skucode}`
+                }else{
+                    return `${item.goods_id}`
+                }
+            })
+            wepy.request({
+                url: `${this.api_host}/restapi/goods-stock`,
+                data: {
+                    config_id: this.config_id,
+                    goods_key: goodsKey.join(',')
+                },
+                success: (res) => {
+                    let change = {
+                        price: 0,
+                        stock: 0,
+                        status: 0
+                    }
+                    res.data.data.items.forEach( (item, index) => {
+                        const goodsKey = item.goods_key.split('_')
+                        const libData = this.libList.items[index]
+                        if(goodsKey.length > 1){
+                            if(libData.goods_id == goodsKey[0] && libData.skucode == goodsKey[1]){
+                                if(libData.price != item.price){
+                                    this.libList.price = item.price
+                                    change.price++
+                                }
+                                if(libData.stock != item.stock){
+                                    libData.stock = item.stock
+                                    libData.quantity = libData.quantity > libData.stock ? libData.stock : libData.quantity
+                                }
+                                wepy.setStorageSync('selectedGoods', this.libList)
+                                this.$apply()
+                            }
+                        }else{
+
+                            if(libData.goods_id == goodsKey[0]){
+                                if(libData.price != item.price){
+                                    this.libList.price = item.price
+                                    change.price++
+                                }
+                                if(libData.stock != item.stock){
+                                    libData.stock = item.stock
+                                    libData.quantity = libData.quantity > libData.stock ? libData.stock : libData.quantity
+                                    change.stock++
+                                }
+                                wepy.setStorageSync('selectedGoods', this.libList)
+                                this.$apply()
+                            }
+                        }
+                        if(item.status <= 0){
+                            this.libList.items.splice(index, 1)
+                        }
+                    });
+                    wepy.hideLoading()
+                }
+            })
+        }
+        getAllTotal(){
+            let libListItems = []
+            this.libList.items.forEach( (item, index) => {
+                if(this.checked[index]){
+                    libListItems.push(item)
+                }
+            });
+            this.allTotal = libListItems.reduce( (normal, item) => {
+                let price = parseFloat(item.price)
+                let num = parseFloat(item.quantity)
+                return normal + (price * num)
+            }, 0)
+            this.allTotal = retainedDecimalMoney(this.allTotal)
+        }
+        getAllSelectedGoods(){
+            let libListItems = []
+            this.libList.items.forEach( (item, index) => {
+                if(this.checked[index]){
+                    libListItems.push(item)
+                }
+            });
+            return libListItems
+        }
+        events = {
+            changeChecked(index, value){
+                this.checked[index] = value
+                this.allSelectStatus()
+                this.getAllTotal()
+            },
+            changeListData(newNum, index, goodsList){
+                const oldNum = this.libList.items[index].quantity
+                if(newNum != oldNum){
+                    this.libList.items[index].quantity = newNum
+                    let price = this.libList.items[index].price
+                    let allPrice = price * newNum
+                    this.libList.items[index].allPrice = retainedDecimalMoney(allPrice)
+                    wepy.setStorageSync('selectedGoods', this.libList)
+                    this.$apply()
+                    this.getAllTotal()
+                }
+            },
+            delItemsData(index){
+                this.libList.items.splice(index, 1)
+                wepy.setStorageSync('selectedGoods', this.libList)
+                this.libList ? this.libList.items.length > 0 ? this.not = false : this.not = true : this.not = true
+                this.$apply()
+            }
+        }
+        methods = {
+            selectAll(){
+                if(this.allSelect){
+                    this.allSelect = false
+                    for(let i = 0, len = this.libList.items.length; i < len; i++){
+                        const item = this.libList.items[i]
+                        this.checked[i] = ''
+                    }
+                }else{
+                    this.allSelect = true
+                    for(let i = 0, len = this.libList.items.length; i < len; i++){
+                        const item = this.libList.items[i]
+                        this.checked[i] = i + ''
+                    }
+                }
+                this.getAllTotal()
+            },
+            reverseSelect(){
+                for(let i = 0, len = this.libList.items.length; i < len; i++){
+                    const item = this.libList.items[i]
+                    if(this.checked[i]){
+                        this.checked[i] = false
+                    }else{
+                        this.checked[i] = i + ''
+                    }
+                }
+                this.allSelectStatus()
+            },
+            delSelect(){
+                for(let i = 0, len = this.libList.items.length; i < len; i++){
+                    if(this.checked[i]){
+                        this.libList.items.splice(i, 1)
+                        this.checked.splice(i, 1)
+                        i--
+                    }
+                }
+                if(!this.libList.items.length) (this.allSelect = false, this.not = true)
+                wepy.setStorageSync('selectedGoods', this.libList)
+            },
+            toPay(){
+                let libListItems = this.getAllSelectedGoods()
+                if(libListItems.length > 0){
+                    wepy.setStorageSync('payGoods', libListItems)
+                    wepy.navigateTo({
+                        url: 'payment'
+                    })
+                }else {
+                    this.$invoke('toast', 'show', {
+                        title: '还没有选择商品',
+                        imgClassName: 'iconfont icon-shibaibiaoqing icon_size'
+                    })
+                }
+            }
+        }
+        allSelectStatus(){
+            if(!this.libList.items) return
+            for(let i = 0, len = this.libList.items.length; i < len; i++){
+                const item = this.checked[i]
+                if(!item){
+                    this.allSelect = false
+                    return
+                }
+            }
+            this.allSelect = true
+        }
+        onShow(){
+            wepy.showLoading({
+                title: '加载中...',
+                mask: true
+            })
+            this.getLibData()
+            this.allSelectStatus()
+        }
+        onLoad(){
+            getExtJson.call(this)
+        }
+        onReady(){
+            this.$broadcast('changeData')
+        }
+    }
+</script>
+
+

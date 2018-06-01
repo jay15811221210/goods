@@ -1,0 +1,107 @@
+<style lang="scss">
+
+.goodslist{
+    padding: 8rpx 0;
+    column-count: 1;
+    column-gap: 20rpx;
+    .product{
+        border-bottom: 1px solid #cccccc;
+        box-sizing: border-box;
+        margin-bottom: 22rpx;
+        height: 100%;
+        overflow: auto;
+        .product_img{
+            width: 100%;
+            display: block;
+        }
+        .product_titel{
+            color: #333333;
+            font-size: 30rpx;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            margin: 20rpx 0 10rpx 0;
+        }
+        .product_ads{
+            color: #7f7f7f;
+            font-size: 28rpx;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+        .product_price{
+            color: #b60000;
+            font-size: 38rxp;
+            margin: 29rpx 0 39rpx 0;
+            .product_buy{
+                width: 80rpx;
+                height: 34rpx;
+                border-radius: 5rpx;
+                background: #e60012;
+                text-align: center;
+                line-height: 34rpx;
+                float: right;
+                color: #ffffff;
+                font-size: 24rpx;
+            }
+        }
+    }
+}
+</style>
+
+<template>
+    <view class="goodslist">
+
+        <repeat for="{{commodity}}">
+            <view class="product" @tap="Goto" data-page="{{item.page}}">
+                <image class="product_img" src="{{item.iurl}}" mode="widthFix"></image>
+            </view>
+        </repeat>
+
+    </view>
+
+</template>
+
+<script>
+    import wepy from 'wepy'
+    export default class Commodity extends wepy.component{
+        onLoad(){
+            this.getExtJson()
+        }
+        getExtJson(id){
+            if (wepy.getExtConfigSync) {
+                const extConfig = wepy.getExtConfigSync();
+                this.api_host = extConfig.api_host
+                this.img_host = extConfig.img_host
+                this.config_id = extConfig.config_id
+                this.merchant_id = extConfig.merchant_id
+                this.commodity = extConfig.commodity
+            }
+        }
+        data = {
+            api_host: '',
+            img_host: '',
+            config_id: '',
+            merchant_id: '',
+            commodity:[]
+        }
+        methods= {
+            Goto(e) {
+                let url=e.currentTarget.dataset.page
+                wx.navigateTo({
+                    url: `${url}`,
+                    fail: res => {
+                        wx.switchTab({
+                            url: `${url}`
+                        })
+                    }
+                })
+            }
+        }
+
+    }
+</script>

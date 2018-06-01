@@ -1,0 +1,197 @@
+
+<style lang="scss" type="stylesheet">
+    
+    .nav{
+        $fontSize: 32rpx;
+        $borderStyle: 1px solid #e6e6e6;
+        &_wrap {
+            // width: 100%;
+            display: flex;
+            box-sizing: border-box;
+            flex-wrap: wrap;
+            margin: 30rpx;
+            position: relative;
+            overflow: hidden;
+
+            // &:after{
+            //     content: "";
+            //     width: 31rpx;
+            //     height: 100%;
+            //     position: absolute;
+            //     right: 0;top: 0;
+            //     background: #fff;
+            // }
+
+        }
+
+        &_item{
+            
+            width: 33.3333%;
+            text-align: center;
+            flex-grow: 1;
+            font-size: $fontSize;
+            box-sizing: border-box;
+            padding: 20rpx 0;
+            margin-right: -1px;
+            margin-bottom: -1px;
+            // border:{
+            //     bottom: $borderStyle;
+            //     right: $borderStyle;
+            // }
+
+            image{
+                width: 90rpx;
+                height: 90rpx;
+            }
+            text{
+                display: block;
+                line-height: 50rpx;
+            }
+
+        }
+        
+    }
+
+</style>
+
+<template>
+    
+    <view class="nav_wrap" wx:if="{{navConfig.length > 0}}">
+
+        <view 
+            wx:for="{{navConfig}}" 
+            wx:key="{{index}}" 
+            class="nav_item" 
+            data-navTo="{{item.navTo}}" 
+            data-query="{{index}}"
+            style="width: {{item.width}}"
+            @tap="navTo"
+        >
+            <image src="{{item.imgUrl}}"></image>
+            <text>{{item.navText}}</text>
+        </view>
+
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import coordtransform from 'coordtransform' //将百度坐标转换腾讯坐标
+
+    export default class Nav extends wepy.component {
+
+        onLoad(){
+            this.getExtJson()
+        }
+        getExtJson(id){
+            if (wepy.getExtConfigSync) {
+                const extConfig = wepy.getExtConfigSync();
+                this.api_host = extConfig.api_host
+                this.img_host = extConfig.img_host
+                this.config_id = extConfig.config_id
+                this.merchant_id = extConfig.merchant_id
+            }
+        }
+        data = {
+            api_host: '',
+            img_host: '',
+            config_id: '',
+            merchant_id: ''
+        } 
+        autoWidth(arr, index){
+            const len = arr.length
+            if(len % 2 == 0 && len % 3 != 0){
+                return '25%'
+            }else if(len % 3 == 0){
+                return '33.3133%'
+            }else if(len % 2 != 0 && len % 4 < 4){
+                if(index <= len - 4){
+                    return '25%'
+                }else{
+                    return '33.2333%'
+                }
+                
+            }
+        }
+        computed = {
+            navList(){
+                const nav = this.navConfig.map( (item, index) => {
+                    const width = this.autoWidth(this.navConfig, index)
+                    if(width){
+                        item.width = width
+                        return item
+                    }else{
+                        return {
+                            navText: '数量不被支持'
+                        }
+                    }
+                })
+            }
+        }
+        props = {
+            navConfig: {
+                type: Array,
+                coerce: function (res) {
+                    return res
+                },
+                default: []
+            }
+        }
+
+        methods = {
+            navTo(e){
+                const data = e.currentTarget.dataset
+                const query = (data.query || data.query == 0 )  && this.navConfig[data.query].query
+                const navTo = data.navto 
+                if(navTo === 'map'){
+                    // /restapi/merchants/130?config_id=56
+                    wepy.request({
+                        url: `${this.api_host}/restapi/merchants/${this.merchant_id}`,
+                        data: {
+                            config_id: this.config_id
+                        },
+                        success: (res) => {
+                            let data = res.data.data
+                            let log = +data.coordinates.split(',')[0]
+                            let lat = +data.coordinates.split(',')[1]
+                            let gcj = coordtransform.bd09togcj02(log, lat); //百度经纬度坐标转国测局坐标
+                            // let tx=coordtransform.gcj02towgs84(gcj[0], gcj[1]); //国测局转腾讯
+                            // console.log(tx)
+                            wepy.openLocation({
+                                latitude: gcj[1],
+                                longitude: gcj[0],
+                                name: data.name,
+                                address: data.address
+                            })
+                        }
+                    })
+                    
+                    return 
+                }
+                if(navTo){
+                    if(!(query instanceof Array) && query instanceof Object){
+                        let param = [];
+                        for(let i in query){
+                            param.push(`${i}=${query[i]}`)
+                        }
+                        wx.navigateTo({
+                            url: `${navTo}?${param.join('&')}`
+                        })
+                    }else if(query)
+                        console.error('Query parameters are objects');
+                    else
+                        wx.navigateTo({
+                            url: `${navTo}`
+                        })
+                }
+                return 
+            }
+        }
+        
+        
+
+    }
+
+</script>

@@ -1,0 +1,116 @@
+
+<style lang="scss">
+    .switch{
+        &_wrap{
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+        &_item{
+            flex: 1;
+            flex-grow: 1;
+            text-align: center;
+            font-size: 24rpx;
+            line-height: 80rpx;
+            position: relative; 
+            overflow: hidden;
+            &.largeThan{
+                &:after{
+                    display: block;
+                }
+                &:before{
+                    display: none;
+                }
+            }
+            &.smallThan{
+                &:after{
+                    display: none;
+                }
+                &:before{
+                    display: block;
+                }
+            }
+            &:after,
+            &:before{
+                content: '';
+                width: 100%;    
+                height: 100%;
+                box-sizing: border-box;
+                position: absolute;
+                left: 0;top: 0;
+                z-index: 9;
+                border-bottom: 1px solid #ce2828;
+                transform: translateX(100%);
+                transition: transform .3s;
+            }
+            &:before{
+                transform: translateX(-100%);
+            }
+            &_active{
+                &:after,
+                &:before{
+                    transform: translateX(0%)!important;
+                }
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="switch_wrap">
+        <repeat for="{{switchConfig}}">
+            <view class="switch_item {{currentIndex == index ? exitMode : ''}} {{oldIndex == index ? 'old_active': ''}}" @tap="changeCurrent" id="{{index}}">
+                {{item.name}}
+            </view>
+        </repeat>
+    </view>
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    export default class TabSwitch extends wepy.component{
+        props = {
+            switchConfig: {
+                type: Array,
+                coerce: (res) => {
+                    return res
+                }
+            },
+            currentIndex: {
+                type: [Number,String],
+                coerce: (res) => {
+                    return res
+                },
+                default: 0
+            }
+        }
+        watch = {
+            currentIndex(newVal){
+                this.oldIndex = +newVal
+            }
+        }
+        data = {
+            exitMode: 'switch_item_active largeThan',
+            oldIndex: 0
+        }
+        methods = {
+            changeCurrent(e){
+                if(this.oldIndex > e.currentTarget.id){
+                    this.exitMode = 'switch_item_active largeThan'
+                }else{
+                    this.exitMode = 'switch_item_active smallThan'
+                }
+                if(this.oldIndex == e.currentTarget.id) return
+                this.currentIndex = e.currentTarget.id
+                this.oldIndex = e.currentTarget.id
+                this.$emit('changeCurrent', this.currentIndex)
+            }
+        }
+        onLoad(){
+            this.oldIndex = this.currentIndex
+        }
+    }
+
+</script>
+
+

@@ -1,0 +1,380 @@
+<style lang="scss">
+    page{
+        height: 100%;
+    }
+    .buy_together{
+        &_wrap{
+            height: 100%;
+            
+            .tav_nav {
+                width: 100%;
+                position: fixed;
+                left: 0;top: 0;
+                background: #fff;
+                z-index: 99;
+            }
+            .scroll_cont{
+                height: 100%;
+                padding-top: 71rpx;
+                box-sizing: border-box;
+            }
+        }
+        &_item{
+            padding: 20rpx 30rpx;
+            box-sizing: border-box;
+            border-bottom: 1px solid #d9d9d9;
+            display: flex;
+        }
+        &_img{
+            $size: 222rpx;
+            width: $size;
+            height: $size;
+            flex-shrink: 0;
+            background: {
+                size: cover;
+                position: center center;
+            }
+        }
+        &_detail{
+            margin-left: 20rpx;
+            flex-grow: 1;
+            position: relative;
+        }
+        &_tit{
+            width: 100%;
+            height: 42rpx;
+            line-height: 42rpx;
+            font-size: 30rpx;
+            overflow : hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+
+        }
+        &_left{
+            height: 60rpx;
+            padding-top: 30rpx;
+        }
+        &_right{
+            float: right;
+            width: 170rpx;
+            position: relative;
+            .btn{
+                width: 170rpx;
+                height: 64rpx;
+                line-height: 64rpx;
+                background: #c33;
+                color: #fff;
+                border-radius: 10rpx;
+                text-align: center;
+            }
+            .disabled_btn{
+                background: #706c6c;
+            }
+            .rang{
+                width: 100%;
+                height: 8px;
+                border-radius: 4px;
+                background: #eee;
+                margin-top: 13rpx;
+                overflow: hidden;
+            }
+            .bar{
+                height: 8px;
+                background: #f25252;
+            }
+            .txt{
+                width: 116rpx;
+                height: 24rpx;
+                text-align: center;
+                font-size: 22rpx;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%)
+            }
+        }
+        &_price{
+            position: absolute;
+            left: 0; bottom: 0;
+            .price_ok{
+                font-size: 40rpx;
+                color: #c33;
+                display: block;
+            }
+            .price_no{
+                font-size: 28rpx;
+                display: block;
+            }
+        }
+        &_time{
+            font-size: 24rpx;
+            &::after{
+                content: '';
+                display: block;
+                clear: both;
+            }
+            text{
+                float: left;
+            }
+            .time{
+                float: left;
+                margin-left: 10rpx;
+            }
+        }
+    }
+</style>
+
+<template>
+    
+    <view class="buy_together_wrap">
+        <view class="tav_nav" wx:if="{{type === 2}}">
+            <scroll-tab 
+                :labelData.sync="labelData" 
+                :defaultIndex.sync="defaultIndex"
+                @tabchange.user="tabChange"
+            ></scroll-tab>
+        </view>
+        <scroll-view 
+            scroll-y="{{true}}" 
+            scroll-top="{{scrollTop}}" 
+            class="scroll_cont" 
+            style="padding-top: {{type !== 1 ? '71rpx' : '0'}}"
+            @scroll="scrollChange"
+        >
+            <repeat for="{{goodsData}}">
+                <view class="buy_together_item" wx:if="{{item.goodsStatus}}" >
+
+                    <view class="buy_together_img" style="background-image: url({{item.thumb}})"></view>
+
+                    <view class="buy_together_detail">
+                        <text class="buy_together_tit">{{item.name}}</text>
+                        <view class="buy_together_main">
+                            <view class="buy_together_left">
+                                <view class="buy_together_time" wx:if="{{item.status != 2}}">
+                                    <text>{{item.timeText}}</text>
+                                    <countdown 
+                                        class="time"
+                                        countdown="{{item.countdown}}" 
+                                        num-style="{{numStyle}}"
+                                        symbol-style="{{symbolStyle}}"
+                                        format="{{format}}"
+                                        data-index="{{index}}"
+                                        bind:endcount="endcount"
+                                    ></countdown>
+                                </view>
+                                <view class="buy_together_price">
+                                    <price 
+                                        class="price_ok" 
+                                        value="{{item.shop_price}}"
+                                        icon="sub"
+                                    ></price>
+                                    <price 
+                                        status="del"
+                                        del-color="#6f5f5f" 
+                                        class="price_no" 
+                                        value="{{item.former_price}}"
+                                    ></price>
+                                </view>
+                            </view>
+                            <view class="buy_together_right">
+                                <view class="btn {{item.status == 2 ? 'disabled_btn' : ''}}" 
+                                    data-disabled="{{item.status == 2 || item.status == 3}}"
+                                    data-id="{{item.id}}"
+                                    @tap="btnClick"
+                                >{{item.btnText}}</view>
+
+                                <view class="txt" wx:if="{{item.status !== 2 && type !== 1}}">
+                                    已抢: {{item.progress}}
+                                </view>
+                                <view class="rang" wx:if="{{item.status !== 2 && type !== 1}}">
+                                    <view class="bar" style="width: {{item.progress}}"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import ScrollTab from '../components/ScrollTab'
+    import getExtJson from '../assets/getExtJson'
+
+    export default class Discount extends wepy.page {
+        config = {
+            usingComponents: {
+                'countdown': '../packages/@minui/wxc-countdown/dist/index',
+                'price': '../packages/@minui/wxc-price/dist/index',
+            }
+        }
+        components = {
+            'scroll-tab': ScrollTab
+        }
+        
+        data = {
+            goodsData: [],
+            numStyle: 'width: 40rpx; font-size: 24rpx; color: #fff; text-align: center; background: #45454d;', // 倒计时样式
+            format: 'dd:hh:mm:ss', // 倒计时显示的格式
+            symbolStyle: 'width: 20rpx; text-align: center;', // 倒计时时间与时间的间隔样式
+            type: '',
+            status: [],
+            url: '',
+            btnText: ['去抢购', '已结束', '即将开始'],
+            seckillData: [],
+            scrollTop: 0,
+            originalData: '',
+            labelCurrentIndex: 1,
+            labelData: [
+                {
+                    title: '已结束'
+                },
+                {
+                    title: '正在秒杀'
+                },
+                {
+                    title: '即将开始'
+                }
+            ],
+            defaultIndex: 1,
+            defaultStatus: true
+        }
+        methods = {
+            btnClick(e){
+                if(e.currentTarget.dataset.disabled) return
+                if(this.type === 1){
+                    wepy.navigateTo({
+                        url: `buyTogetherInfo?id=${e.currentTarget.dataset.id}`
+                    })
+                } else if(this.type === 2){
+                    wepy.navigateTo({
+                        url: `seckillInfo?id=${e.currentTarget.dataset.id}`
+                    })
+                }
+            },
+            tabChange(e){
+                if(this.defaultStatus) {
+                    this.defaultStatus = false
+                    return
+                }
+                if(this.type === 2){
+                    if(e.index === 0){
+                        this.labelCurrentIndex = 2
+                    }else if(e.index === 1){
+                        this.labelCurrentIndex = 1
+                    }else if(e.index === 2){
+                        this.labelCurrentIndex = 3
+                    }
+                    this.getSeckillTabData(this.labelCurrentIndex)
+                }
+                
+            },
+            scrollChange(e){
+                this.scrollTop = e.detail.scrollTop
+            },
+            endcount(e){
+                console.log(e)
+            }
+        }
+        getDataList(){
+            wepy.request({
+                url: `${this.api_host}${this.url}`,
+                data: {
+                    config_id: this.config_id
+                },
+                success: (res) => {
+                    this.originalData = res // 为了解决秒杀tab切换时时间不变先
+                    this.getRepeatGoods(res)
+                    if(this.type === 2){
+                        this.getSeckillTabData(this.defaultIndex)
+                    }
+                }
+            })
+        }
+        getRepeatGoods(data){
+            this.goodsData.length = 0
+            this.goodsData.push(...data.data.data.items.map( item => {
+                // this.option 配置数据中的key
+                let stopdown = item[this.option.stop] - (Date.parse(new Date()) / 1000)
+                let startdown = item[this.option.start] - (Date.parse(new Date()) / 1000)
+
+                // 根据type值获取btn文字的索引 +1的值 值为2时按钮不可用
+                let status
+                if(this.type === 1){ 
+                    status = stopdown > 0 ? 1 : 2
+                }else if(this.type === 2){
+                    if(startdown < 0){
+                        status = stopdown > 0 ? 1 : 2
+                    }else{
+                        status = 3
+                    }
+                    
+                }
+                // startdown < 0 ? stopdown : startdown
+                return {
+                    id: item.id,
+                    name: item[this.option.name],
+                    thumb: `${this.img_host}${item[this.option.thumb]}`,
+                    former_price: item[this.option.former_price],
+                    shop_price: item[this.option.shop_price],
+                    countdown: startdown < 0 ? stopdown : startdown,
+                    timeText: startdown < 0 ? '距结束' : '距开始',
+                    btnText: this.btnText[status - 1],
+                    progress: `${parseInt(item.sales / item.stock * 100)}%`, // 秒杀进度条
+                    status: status,
+                    goodsStatus: this.type == 1 && startdown > 0 ? false : true,
+                    type: this.type // 1 拼团 2 秒杀
+                }
+            }).sort( (a, b) => {
+                return b.countdown - a.countdown
+            }))
+            if(this.type === 2){
+                let copyGoodsDataStr = JSON.stringify(this.goodsData)
+                this.seckillData = JSON.parse(copyGoodsDataStr)
+            }
+            this.$apply()
+        }
+        getSeckillTabData(status){
+            this.originalData && this.getRepeatGoods(this.originalData)
+            this.goodsData.length = 0
+            this.scrollTop = 0
+            this.goodsData.push(...this.seckillData.filter(item => item.status === status))
+            this.$apply()
+        }
+        onLoad(options){
+            getExtJson.call(this)
+            this.type = +options.type // 1 拼团 2 秒杀
+            if(options.type == 1){
+                this.url = '/restapi/wechat-pinkshop'
+                this.option = {
+                    name: 'pinkshop_details',
+                    thumb: 'pinkshop_img',
+                    former_price: 'former_price',
+                    shop_price: 'pinkshop_price',
+                    stop: 'pinkshop_stop',
+                    start: 'pinkshop_start'
+                }
+            }else if (options.type == 2){
+                this.url = '/restapi/wechat-seckill'
+                this.option = {
+                    name: 'title',
+                    thumb: 'images',
+                    former_price: 'original_price',
+                    shop_price: 'activity_price',
+                    stop: 'end_at',
+                    start: 'start_at'
+                }
+            }
+            this.getDataList()
+            this.$apply()
+        }
+    }
+
+</script>
+

@@ -1,0 +1,216 @@
+<style lang="less">
+  .carousel{
+    width: 100%;
+    height: 422rpx;
+    .section_img{
+      width: 94%;
+      margin: 10rpx auto 45rpx;
+      text-align: center;
+      .advertisement{
+        width: 100%;
+        height: 98rpx;
+        margin: 0 auto;
+      }
+    }
+      .partition{
+          width: 710rpx;
+          height: auto;
+          display: inline-block;
+          margin:auto 20rpx 40rpx;
+      }
+  }
+  .shop{
+    .goods_list{
+      padding: 0rpx 30rpx 16rpx;
+      border-bottom: 10rpx solid #ededed;
+    }
+  }
+</style>
+
+<template>
+    <view class="carousel">
+        <!-- 轮播图 -->
+        <carousel :carouselConfig.sync="carouselConfig"></carousel>
+
+        <!-- 导航 -->
+        <nav :navConfig.sync="navConfig"></nav>
+
+        <!--广告-->
+      <view class="section_img" @tap="bannerImg" wx:for="{{sectionImg}}" wx:key="{{index}}" data-url="{{item.page}}">
+          <image class="sec_img" mode="widthFix" src="{{item.iurl}}"></image>
+      </view>
+
+        <!--区域-->
+        <view class="partition">
+            <partition :goodsClass.sync="goodsClass"></partition>
+        </view>
+
+        <!-- 推荐商品 -->
+        <view class="shop">
+            <repeat for="{{goodsListConfig}}" item="item" index="index" key="key">
+                <goodsList :goodsListConfig.sync="item">
+                    <view slot="title">
+                        {{item.title}}
+                    </view>
+                </goodsList>
+            </repeat>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    import Carousel from 'xnr-swiper'
+    import getExtJson from '../assets/getExtJson'
+    import Nav from '../components/Nav'
+    import GoodsList from '../components/GoodsList'
+    import Partition from '../components/Partition'
+
+    export default class extends wepy.page {
+        components = {
+            carousel: Carousel,
+            nav: Nav,
+            goodsList: GoodsList,
+            partition: Partition
+        }
+        data = {
+            carouselConfig: {
+                imgUrls: [],
+                dotsPosition: 'center'
+            },
+            navConfig: [],
+            goodsListConfig: [],
+            goodsClass: [],
+            sectionImg: []
+        }
+
+        getListDataPromise(index) {
+            index = index || 0
+            new Promise((resolve, reject) => {
+                wepy.request({
+                    url: `${this.api_host}/restapi/goods`,
+                    data: {
+                        config_id: 634,
+                        page: 1,
+                        per_page: this.flag[index].num,
+                        flag: this.flag[index].flag,
+                        status: 1
+                    },
+                    success: (res) => {
+                        const data = res.data.data.items.map((item, inx) => {
+                            return {
+                                imgUrl: item.thumb.indexOf('http') > -1 ? item.thumb : `${this.img_host}${item.thumb}`,
+                                title: item.name,
+                                details: '',
+                                model: this.flag[index].style[inx] || 'small',
+                                market_price: item.market_price,
+                                price: item.price,
+                                id: item.id
+                            }
+                        })
+                        let obj = {
+                            id: this.flag[index].flag,
+                            title: this.flag[index].tag,
+                            listData: data
+                        }
+                        this.goodsListConfig.push(obj)
+                        resolve(++index)
+                        this.$apply()
+                    }
+                })
+            }).then(index => {
+                if (index < this.flag.length) {
+                    this.getListDataPromise(index)
+                }
+            })
+        }
+
+        methods = {
+            bannerImg(e) {
+                let url=e.currentTarget.dataset.url
+                wx.navigateTo({
+                    url: `${url}`,
+                    fail: res => {
+                        wx.switchTab({
+                            url: `${url}`
+                        })
+                    }
+                })
+            }
+        }
+
+        onLaunch() {
+        }
+
+        // 获取菜单数据
+        getMenu(data) {
+            if (wx.getExtConfig) {
+                wx.getExtConfig({
+                    success: (res) => {
+                        // pages/article
+                        const menu = this.menu.map((item) => {
+                            let url = item.page.split('?')
+                            let obj
+                            if (url[1]) {
+                                obj = {}
+                                let key = url[1].split('=')[0]
+                                let val = url[1].split('=')[1]
+                                obj[key] = val
+                            }
+                            return {
+                                imgUrl: `${this.img_host}${item.icon}`,
+                                navText: item.name,
+                                navTo: url[0],
+                                query: obj
+                            }
+                        })
+                        menu && (this.navConfig = menu)
+                        this.$apply()
+                    }
+                })
+            }
+        }
+
+        // 轮播图数据请求
+        getCarousel() {
+            wx.request({
+                url: `${this.api_host}/restapi/wechat-focus`,
+                data: {
+                    config_id: this.config_id,
+                    belongs: 1,
+                    type: 0
+                },
+                success: (res) => {
+                    const data = res.data.data.map((item) => {
+                        return `${this.img_host}${item.image}`
+                    })
+                    this.carouselConfig.imgUrls = data
+                    this.$apply()
+                }
+            })
+        }
+
+        onLoad() {
+            console.log(1,this)
+            getExtJson.call(this)
+            /*
+      * 通过ext.json传入的swiper 数据 修改轮播图的样式
+      * */
+            if (this.swiper) {
+                for (let i in this.swiper) {
+                    this.carouselConfig[i] = this.swiper[i]
+                }
+            }
+            this.getMenu()
+            this.getListDataPromise()
+            this.getCarousel()
+            this.goodsClass.forEach((item) => {
+                item.icon = `${this.img_host}${item.icon}`
+            })
+             this.sectionImg.forEach((item) =>{
+                item.iurl=`${this.img_host}${item.iurl}`
+            })
+            this.$apply();
+        }
+
+    }
+</script>

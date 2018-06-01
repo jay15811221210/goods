@@ -1,0 +1,312 @@
+
+<style lang="scss">
+    page{
+        background: #f5f5f5;
+    }
+    .library_item{
+        &_wrap{
+            display: flex;
+            padding: 20rpx 20rpx;
+            box-sizing: border-box;
+            border-bottom: 10rpx solid #f1f1f1;
+            background: #fff;
+
+        }
+        &_view{
+            flex-grow: 1;
+            display: flex;
+        }
+        &_img{
+            $imgSize: 160rpx;
+            width: $imgSize;
+            height: $imgSize;
+            image{
+                width: 100%;
+            }
+        }
+        &_checked{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20rpx;
+            checkbox-group{
+                display: block;
+                label{
+                    $labelSize: 40rpx;
+                    width: $labelSize;
+                    height: $labelSize;
+                    display: block;
+                    border: 1px solid #ccc;
+                    border-radius: 50%;
+                    line-height: $labelSize;
+                    text-align: center;
+                    margin-right: 12rpx;
+                    font-size: $labelSize / 2;
+                    color: #ec4646;
+                    &.icon-duigou{
+                        border-color: #ec4646;
+                    }
+                }
+                checkbox{
+                    display: none;
+                }
+            }
+        }
+        &_text{
+            flex-grow: 1;
+            margin-left: 20rpx;
+            view{
+                /*line-height: 50rpx;*/
+            }
+            .library_item_name{
+                font-size: 32rpx;
+                width: 14em;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            view:nth-of-type(2){
+                font-size: 28rpx;
+                color: #777;
+            }
+            view:last-child{
+                width: auto;
+                &:after{
+                    content: "";
+                    display: block;
+                    clear: both;
+                }
+                line-height: 56rpx;
+                font-size: 24rpx;
+                color: #333;
+            }
+        }
+    }
+    .total{
+        font-size: 36rpx;
+        color: #d45a5a;
+        float: right;
+    }
+    .picker_num{
+        width: 240rpx;
+        float: left;
+        border: 1px solid #ccc;
+        border-right: 0;
+        margin-top: 20rpx;
+    }
+    .picker_del{
+        float: right;
+        margin-top: 20rpx;
+        .del{
+            font-size: 36rpx!important;
+            color: #999!important;
+        }
+    }
+    .min_num_picker{
+        &_wrap{
+            display: flex;
+            text-align: center;
+        }
+        &_btns{
+            width: 60rpx;
+            padding: 0 12rpx;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            border-right: 1px solid #ccc;
+            border-left: 0;
+        }
+        &_input{
+            flex-grow: 0;
+            height: 50rpx;
+            border-radius: 0;
+        }
+    }
+    .listprice{
+        color: red;
+        font-size: 24rpx;
+    }
+</style>
+
+<template>
+
+    <view>
+        <repeat for="{{libraryItemConfig.items}}">
+            <view class="library_item_wrap" @longtap="editMethod" id="{{index}}">
+                <view class="library_item_checked">
+                    <checkbox-group @change="checkedChange" data-id="{{index}}">
+                        <label class="iconfont {{checked[index] ? 'icon-duigou' : ''}}">
+                            <checkbox value="{{index}}" checked="{{checked[index]}}"></checkbox>
+                        </label>
+                    </checkbox-group>
+                </view>
+                <view class="library_item_view">
+                    <view class="library_item_img">
+                        <image  mode="widthFix" src="{{item.thumb}}"></image>
+                    </view>
+                    <view class="library_item_text">
+                        <view class="library_item_name">
+                            {{item.goods_name}}
+                        </view>
+                        <view>
+                            {{item.props}}
+                        </view>
+                        <text class="listprice">单价: {{item.price}}  </text>
+                        <view>
+
+                            <view class="picker_num">
+                                <!-- <min-num-picker :maxNum.sync="maxNum" :currentNum.sync="item.quantity" ></min-num-picker> -->
+                                <view class="min_num_picker_wrap">
+                                    <view class="min_num_picker_btns" @tap="reduce" data-id="{{index}}" data-num="{{item.stock ? item.quantity : 0}}" data-stock="{{item.stock}}">
+                                        <xnricon2 type="back" fontSize="50rpx" color="#000"></xnricon2>
+                                    </view>
+
+                                    <view class="num_picker_input">
+                                        <input type="number" value="{{item.quantity}}" disabled="{{disabled}}" @input="numChange" />
+                                    </view>
+
+                                    <view class="min_num_picker_btns" @tap="plus" data-id="{{index}}" data-num="{{item.quantity}}" data-stock="{{item.stock}}">
+                                        <xnricon3 type="jiantouyou" fontSize="50rpx" color="#000"></xnricon3>
+                                    </view>
+                                </view>
+                            </view>
+                            <view class="picker_del" data-id="{{index}}" @tap="delItem">
+                                <xnricon11 type="del" fontSize="50rpx" color="red"></xnricon11>
+                            </view>
+
+                        </view>
+                    </view>
+
+                </view>
+                <!-- 数量修改器 弹出版-->
+                <!-- <view wx:if="{{index == 0}}">
+                    <num-picker @changeCurrent.user="changeCurrent" />
+                </view> -->
+
+            </view>
+        </repeat>
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+    import NumPicker from '../components/NumPicker'
+    import MinNumPicker from '../components/MinNumPicker'
+    import xnricon from 'xnr-icon'
+
+    export default class LibraryItem extends wepy.component{
+
+        props = {
+
+            libraryItemConfig: {
+                type: Object,
+                coerce: (res) => {
+                    return res
+                },
+                default: {}
+            },
+            checked: {
+                type: Array,
+                coerce: (res) => {
+                    return res
+                }
+            },
+            changeChecked: {
+                type: String,
+                coerce: (res) => {
+                    return res
+                }
+            }
+        }
+        components = {
+            'num-picker': NumPicker,
+            'min-num-picker': MinNumPicker,
+            xnricon1: xnricon,
+            xnricon2: xnricon,
+            xnricon3: xnricon,
+            xnricon11:xnricon
+        }
+        data = {
+            longIndex: 0,
+            nums: [],
+            disabled: true
+        }
+
+        methods = {
+            delItem(e){
+                let id = e.currentTarget.dataset.id
+                wepy.showModal({
+                    title: '提示',
+                    content: '确定删除吗?',
+                    success: (res) => {
+                        if (res.confirm) {
+                            this.$emit('delItemsData', id)
+                        }
+                    }
+                })
+            },
+            changeCurrent(data){
+                if(data.confirm){
+                    this.$emit('changeListData', data, this.longIndex)
+                }else if(data.cancel){
+
+                }
+            },
+            checkedChange(e){
+                const index = e.currentTarget.dataset.id
+                const thatActive = e.detail.value[0]
+                this.$emit('changeChecked', index, thatActive)
+            },
+            editMethod(e){
+                // this.longIndex = e.currentTarget.id
+                // wepy.showActionSheet({
+                //     itemList: ['修改数量', '删除',],
+                //     success: (res) => {
+                //         if(res.tapIndex == 0){
+                //             this.$invoke('num-picker', 'show',{
+                //                 currentNum: e.currentTarget.dataset.num
+                //             })
+                //         }else if(res.tapIndex == 1){
+                //             this.$emit('delItemsData', this.longIndex)
+                //         }
+                //     }
+                // })
+            },
+            reduce(e){
+                let currentNum = e.currentTarget.dataset.num
+                let id = e.currentTarget.dataset.id
+                let stockNum = e.currentTarget.dataset.stock
+                stockNum = stockNum ? 1 : 0
+                currentNum--;
+                currentNum = currentNum < stockNum ? stockNum : currentNum
+                this.$emit('changeListData', currentNum, id)
+            },
+            plus(e){
+                let currentNum = e.currentTarget.dataset.num
+                let id = e.currentTarget.dataset.id
+                let stockNum = e.currentTarget.dataset.stock
+                if(currentNum+1 > stockNum){
+                    wx.showToast({
+                        title: '库存不足',
+                        image: '../image/49551364425186955.png',
+                        duration: 2000
+                    })
+                }
+                currentNum++;
+                currentNum = currentNum > stockNum ? stockNum : currentNum
+                this.$emit('changeListData', currentNum, id)
+            }
+        }
+        events = {
+            changeData(){
+
+            }
+        }
+        onLoad(){
+
+        }
+    }
+</script>
+
+

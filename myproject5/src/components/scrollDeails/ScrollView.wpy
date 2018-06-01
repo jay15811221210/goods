@@ -1,0 +1,160 @@
+<style lang="scss">
+    .scroll_view{
+        &_wrap{
+            height: 100%;
+            background: #fff;
+            position: relative;
+        }
+        &_items{
+            min-height: 120rpx;
+            &_tit{
+                height: 58rpx;
+                view{
+                    font-size: 30rpx;
+                    font-weight: bold;
+                    line-height: 58rpx;
+                    padding-left: 1em;
+                    border-bottom: 1px solid #eee;
+                }
+                
+            }
+            // .tit_position{
+            //     view{
+            //         width: 100%;
+            //         position: absolute;
+            //         left: 0; top: 0;
+            //     }
+            // }
+            &_children{
+                width: 100%;
+                padding: 34rpx 14rpx;
+                border-bottom: 1px solid #eee;
+                box-sizing: border-box;
+                display: flex;
+                &_img{
+                    width: 160rpx;
+                    height: 160rpx;
+                    flex-shrink: 0;
+                    background: {
+                        size: cover;
+                        repeat: no-repeat;
+                        position: center center;
+                    }
+                }
+                &_context{
+                    margin-left: 16rpx;
+                    font-size: 30rpx;
+                    position: relative;
+                    .name{
+                        font-size: 30rpx;
+                        overflow: hidden;
+                        -webkit-line-clamp: 1;
+                        white-space: normal;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        box-sizing: border-box;
+                    }
+                    .price_wrap{
+                        position: absolute;
+                        bottom: 0; left: 0;
+                    }
+                }
+            }
+        }
+    }
+</style>
+
+<template>
+
+    <scroll-view class="scroll_view_wrap" scroll-y="true" scroll-top="{{scrollTop}}" scroll-with-animation="true" @scroll="scrollFn">
+        <repeat for="{{viewDeails}}">
+            <view class="scroll_view_items">
+                <view class="scroll_view_items_tit {{inx[index] == positionIndex ? 'tit_position' : ''}}">
+                    <view>
+                        {{item.name}}
+                    </view>
+                </view>
+                <repeat for="{{item.children}}" item="i">
+                    <view class="scroll_view_items_children" data-id="{{i.id}}" @tap="goTo">
+                        <view class="scroll_view_items_children_img" style="background-image: url({{i.thumb}})"></view>
+                        <view class="scroll_view_items_children_context">
+                            <view class="name">{{i.name}}</view>
+                            <view class="price_wrap">
+                                <text class="price">{{i.price}}</text>
+                            </view>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
+        </repeat>
+    </scroll-view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class ScrollView extends wepy.component {
+        props = {
+            viewDeails: {},
+            scrollTop: {
+                type: [Number, String],
+                coerce: res => res
+            },
+            titleTop: {
+                type: Array,
+                coerce: res => res
+            }
+        }
+        data = {
+            positionIndex: 0,
+            inx: {}
+        }
+        watch = {
+            viewDeails(newVal){
+                let index = 0
+                this.inx = {}
+                Object.keys(newVal).forEach( (item, index) => {
+                    this.inx[item] = index
+                })
+                this.$apply()
+            }
+        }
+        methods = {
+            scrollFn(e){
+                let selfTop = e.detail.scrollTop
+                this.positionIndex = this.getScrollTopIndex(selfTop)
+                this.$emit('change', this.positionIndex, selfTop)
+            },
+            goTo(e){
+                console.log(e)
+                const id = e.currentTarget.dataset.id
+                wepy.navigateTo({
+                    url: `goodsInfo?id=${id}`
+                })
+            }
+        }
+        getScrollTopIndex(selfTop){
+            let currentIndex = 0
+            for(let i = 0, I = this.titleTop.length; i < I; i++){
+                if(i == I-1){
+                    if(selfTop => this.titleTop[i]){
+                        currentIndex = i
+                    }
+                }else {
+                    if(selfTop >= this.titleTop[i] && selfTop < this.titleTop[i + 1]){
+                        currentIndex = i
+                        break
+                    }
+                }
+            }
+            return currentIndex
+        }
+        onLoad(){
+            
+        }
+    }
+</script>
+
+

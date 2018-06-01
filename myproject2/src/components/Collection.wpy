@@ -1,0 +1,123 @@
+<style lang="scss">
+    .Collection{
+        background: #eee;
+        height: 100%;
+        .shopList{
+            background: white;
+            width: 100%;
+            height: 210rpx;
+            border-top:1px solid #efefef;
+            padding: 30rpx;
+            box-sizing: border-box;
+            display: flex;
+            position: relative;
+            image{
+                width: 142rpx;
+                height: 100%;
+            }
+            .shop_details{
+                width: 445rpx;
+                height: 100%;
+                margin: 0 20rpx;
+                display: flex;
+                flex-direction: column;
+                font-size: 25rpx;
+                position: relative;
+                .shop_name{
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                    display:-webkit-box;
+                    -webkit-line-clamp:2;
+                    -webkit-box-orient:vertical;
+                }
+                view{
+                    flex: 1 1 auto;
+                }
+                .price{
+                    position: absolute;
+                    bottom: 0;
+                    color: #c20000;
+                }
+            }
+            .xingxing{
+                position: absolute;
+                right: 30rpx;
+                bottom: 30rpx;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="Collection">
+        <repeat for="{{collection}}">
+            <view class="shopList" data-id="{{item.id}}" data-titleName="{{item.name}}" @tap="skipDetails">
+                <image src="{{item.images}}" mode="scleToFill"></image>
+                <view class="shop_details">
+                    <view class="shop_name">{{item.name}}</view>
+                    <!--<view>45</view>-->
+                    <view class="price">￥{{item.price}}</view>
+                </view>
+                <view
+                    class="xingxing"
+                    catchtap="collection"
+                    data-index="{{index}}"
+                    data-collectionId="{{item.collectionId}}"
+                    data-status="{{collectionStatus[index]}}"
+                    wx:if="{{item.color}}"
+                >
+                    <my-icon type="shoucang1" :color="item.color" fontSize="50" ></my-icon>
+                </view>
+            </view>
+        </repeat>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import Icon from '../components/Icon'
+
+    export default class Collection extends wepy.component {
+        props = {
+            collection: {},
+            collectionStatus: {},
+            color: {
+                type: String,
+                coerce: val => val,
+                default: '#ccc'
+            },
+            activeColor: {
+                type: String,
+                coerce: val => val,
+                default: 'red'
+            },
+        }
+        data = {
+
+        }
+        methods = {
+            collection(e){
+                let index = e.currentTarget.dataset.index
+                if(!e.currentTarget.dataset.status){
+                    this.collection[index].color = this.color
+                    this.collectionStatus[index] = true
+                }else{
+                    this.collection[index].color = this.activeColor
+                    this.collectionStatus[index] = false
+                }
+                this.$apply()
+                this.$emit('change', {
+                    index: index,
+                    status: this.collectionStatus[index],
+                    collectionId: e.currentTarget.dataset.collectionid
+                })
+            },
+            skipDetails(e) {
+                this.$emit('skipDetails', e.currentTarget.dataset.id, e.currentTarget.dataset.titlename)
+            }
+        }
+        components = {
+            'my-icon': Icon
+        }
+    }
+</script>

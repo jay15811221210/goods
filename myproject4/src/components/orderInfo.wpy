@@ -1,0 +1,76 @@
+
+<style lang="scss">
+    page{
+        background: #f5f5f5;    
+    }
+    .order_info_wrap{
+        padding: 0 20rpx;
+        .order_info{
+            background: #fff;
+            border-radius:10rpx;
+            padding: 0 20rpx;
+            margin-top: 20rpx; 
+            .info_wc{
+                font-size: 28rpx;
+                padding-top: 26rpx;
+            }
+            .info_ws{
+                font-size: 26rpx;
+                border-bottom: 1px solid red;
+                padding-top: 25rpx;
+                display: inline-block;
+                width: 100%;
+                text:last-child{
+                    float: right; 
+                    width: 300rpx;   
+                    display: inline-block;
+                    margin-bottom: 20rpx;                 
+                }
+            
+            }
+            .info_wd{
+                    font-size: 26rpx;
+                    line-height: 60rpx;
+                    text:last-child{
+                        float: right;
+                    }
+                }
+        }
+    }
+</style>
+
+<template>
+    
+    <view class="order_info_wrap">
+
+        <view class="order_info">
+            <view class="info_wc">订单已完成</view>
+            <view class="info_ws"><text>订单号</text> <text>03203205315615610510</text> </view>
+            <view class="info_wd"><text>下单时间</text> <text>12:11:11</text></view>
+        </view>
+
+        <view class="order_info">
+            <view class="info_wc">配送时间</view>
+            <view class="info_ws"><text>收获信息</text> <text>中国北京市水水水水水水水水水水水水大溪区生物临沂大学男生宿舍102</text></view>
+            <view class="info_wd"><text>收货时间</text> <text>12:22:022</text></view>
+        </view>
+
+    </view>
+
+</template>
+
+<script>
+
+    import wepy from 'wepy'
+
+    export default class OrderInfo extends wepy.component {
+        
+        data = {
+            orderStatus: '订单已完成',
+
+        }
+
+    }
+
+</script>
+
